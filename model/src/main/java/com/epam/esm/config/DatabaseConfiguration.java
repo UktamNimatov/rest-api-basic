@@ -2,8 +2,8 @@ package com.epam.esm.config;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,7 +24,7 @@ import java.util.Properties;
 @Configuration
 //@PropertySource({"classpath:/config/database.yaml"})
 public class DatabaseConfiguration {
-    private static final Logger logger = LoggerFactory.getLogger(DatabaseConfiguration.class);
+    private static final Logger logger = LogManager.getLogger();
 
     private static final String EMBEDDED_DATABASE_SCRIPT = "script/embedded.sql";
 
@@ -86,11 +86,11 @@ public class DatabaseConfiguration {
 
     @Bean
     public DataSource dataSource(HikariConfig hikariConfig) {
-        System.out.println(">?>?>?>?>?>?");
-        System.out.println(hikariConfig.getDriverClassName());
-        System.out.println(hikariConfig.getJdbcUrl());
-        System.out.println(hikariConfig.getUsername());
-        System.out.println(hikariConfig.getPassword());
+        logger.info(">?>?>?>?>?>?");
+        logger.info(hikariConfig.getDriverClassName());
+        logger.info(hikariConfig.getJdbcUrl());
+        logger.info(hikariConfig.getUsername());
+        logger.info(hikariConfig.getPassword());
         return new HikariDataSource(hikariConfig);
     }
 
