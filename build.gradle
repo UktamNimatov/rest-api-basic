@@ -14,6 +14,10 @@ subprojects {
     group 'com.epam.esm'
     version '1.0'
 
+    configurations.all {
+        exclude group: "commons-logging", module: "commons-logging"
+    }
+
     dependencies {
 
         // https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api
@@ -34,9 +38,11 @@ subprojects {
         // https://mvnrepository.com/artifact/org.slf4j/slf4j-api
         implementation group: 'org.slf4j', name: 'slf4j-api', version: '2.0.2'
 
-        // https://mvnrepository.com/artifact/org.slf4j/slf4j-simple
-        testImplementation group: 'org.slf4j', name: 'slf4j-simple', version: '2.0.2'
+        // https://mvnrepository.com/artifact/org.slf4j/slf4j-jdk14
+        testImplementation group: 'org.slf4j', name: 'slf4j-jdk14', version: '2.0.2'
 
+        // https://mvnrepository.com/artifact/ch.qos.logback/logback-classic
+        testImplementation group: 'ch.qos.logback', name: 'logback-classic', version: '1.4.3'
 
     }
 

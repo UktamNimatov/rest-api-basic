@@ -13,5 +13,5 @@ gradle
 .gitattributes
 
 
-model/src/main/java/com/epam/esm/Main.java
-
+out
+model/out/**
