@@ -7,34 +7,30 @@ import java.util.List;
 import java.util.Objects;
 import java.util.StringJoiner;
 
-public class GiftCertificate {
+public class GiftCertificate extends Entity{
 
-    private long id;
+    private static final long serialVersionUID = 1L;
+
     private String name;
     private String description;
     private double price;
     private int duration;
     private String createDate;
     private String lastUpdateDate;
+    private List<Tag> tagList;
 
     public GiftCertificate() {
     }
 
-    public GiftCertificate(String name, String description, double price, int duration, String createDate, String lastUpdateDate) {
+    public GiftCertificate(String name, String description, double price, int duration,
+                           String createDate, String lastUpdateDate, List<Tag> tagList) {
         this.name = name;
         this.description = description;
         this.price = price;
         this.duration = duration;
         this.createDate = createDate;
         this.lastUpdateDate = lastUpdateDate;
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
+        this.tagList = tagList;
     }
 
     public String getName() {
@@ -85,35 +81,45 @@ public class GiftCertificate {
         this.lastUpdateDate = lastUpdateDate;
     }
 
+    public List<Tag> getTagList() {
+        return tagList;
+    }
+
+    public void setTagList(List<Tag> tagList) {
+        this.tagList = tagList;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
         GiftCertificate that = (GiftCertificate) o;
-        return id == that.id &&
-                Double.compare(that.price, price) == 0 &&
+        return Double.compare(that.price, price) == 0 &&
                 duration == that.duration &&
                 Objects.equals(name, that.name) &&
                 Objects.equals(description, that.description) &&
                 Objects.equals(createDate, that.createDate) &&
-                Objects.equals(lastUpdateDate, that.lastUpdateDate);
+                Objects.equals(lastUpdateDate, that.lastUpdateDate) &&
+                Objects.equals(tagList, that.tagList);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, description, price, duration, createDate, lastUpdateDate);
+        return Objects.hash(super.hashCode(), name, description, price, duration, createDate, lastUpdateDate, tagList);
     }
 
     @Override
     public String toString() {
         return new StringJoiner(", ", GiftCertificate.class.getSimpleName() + "[", "]")
-                .add("id=" + id)
                 .add("name='" + name + "'")
                 .add("description='" + description + "'")
                 .add("price=" + price)
                 .add("duration=" + duration)
-                .add("createDate=" + createDate)
-                .add("lastUpdateDate=" + lastUpdateDate)
+                .add("createDate='" + createDate + "'")
+                .add("lastUpdateDate='" + lastUpdateDate + "'")
+                .add("tagList=" + tagList)
                 .toString();
     }
 }
+

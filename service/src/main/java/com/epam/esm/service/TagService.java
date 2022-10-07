@@ -1,22 +1,18 @@
 package com.epam.esm.service;
 
+import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
+import com.epam.esm.exception.DaoException;
+import com.epam.esm.exception.ServiceException;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface TagService<T extends Tag> {
+public interface TagService<T> extends EntityService<Tag> {
 
-    boolean insert(T tag);
+    boolean insert(Tag tag) throws ServiceException;
 
-    Optional<T> findById(long id);
+    List<T> findTagsOfCertificate(long certificateId) throws ServiceException;
 
-    Optional<T> findByName(String name);
-
-    List<T> findAll();
-
-    List<T> findTagsOfCertificate(long certificateId);
-
-    boolean delete(long id);
-
+    boolean connectGiftCertificates(List<GiftCertificate> giftCertificates, long tagId) throws ServiceException;
 }

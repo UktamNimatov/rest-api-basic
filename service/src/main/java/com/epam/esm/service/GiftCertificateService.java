@@ -2,25 +2,20 @@ package com.epam.esm.service;
 
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
+import com.epam.esm.exception.DuplicateResourceException;
+import com.epam.esm.exception.InvalidFieldException;
+import com.epam.esm.exception.ServiceException;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface GiftCertificateService<T extends GiftCertificate> {
+public interface GiftCertificateService<T> extends EntityService<GiftCertificate> {
 
-    boolean insert(T giftCertificate);
+    boolean insert(GiftCertificate giftCertificate) throws InvalidFieldException, DuplicateResourceException, ServiceException;
 
-    Optional<T> findById(long id);
+    List<T> findGiftCertificatesOfTag(long tagId) throws ServiceException;
 
-    Optional<T> findByName(String name);
+    boolean update(T giftCertificate) throws ServiceException;
 
-    List<T> findAll();
-
-    List<T> findGiftCertificatesOfTag(long tagId);
-
-    boolean delete(long id);
-
-    boolean update(T giftCertificate);
-
-    boolean connectTags(List<Tag> tags, long giftCertificateId);
+    boolean connectTags(List<Tag> tags, long giftCertificateId) throws ServiceException;
 }

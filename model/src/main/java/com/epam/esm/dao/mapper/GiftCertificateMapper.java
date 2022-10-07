@@ -1,9 +1,10 @@
 package com.epam.esm.dao.mapper;
 
+import com.epam.esm.entity.Entity;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.exception.DaoException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.RowMapperResultSetExtractor;
 import org.springframework.stereotype.Component;
@@ -16,8 +17,8 @@ import java.util.Collections;
 import java.util.Optional;
 
 @Component
-public class GiftCertificateMapper implements RowMapper<Optional<GiftCertificate>> {
-    private static final Logger logger = LoggerFactory.getLogger(GiftCertificateMapper.class);
+public class GiftCertificateMapper implements EntityMapper<GiftCertificate> {
+    private static final Logger logger = LogManager.getLogger();
 
     @Override
     public Optional<GiftCertificate> mapRow(ResultSet rs, int rowNum) {

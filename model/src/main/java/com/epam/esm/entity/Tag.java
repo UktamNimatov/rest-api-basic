@@ -3,9 +3,10 @@ package com.epam.esm.entity;
 import java.util.Objects;
 import java.util.StringJoiner;
 
-public class Tag {
+public class Tag extends Entity{
 
-    private long id;
+    private static final long serialVersionUID = 1L;
+
     private String name;
 
     public Tag() {
@@ -13,14 +14,6 @@ public class Tag {
 
     public Tag(String name) {
         this.name = name;
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
     }
 
     public String getName() {
@@ -35,20 +28,19 @@ public class Tag {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
         Tag tag = (Tag) o;
-        return id == tag.id &&
-                Objects.equals(name, tag.name);
+        return Objects.equals(name, tag.name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name);
+        return Objects.hash(super.hashCode(), name);
     }
 
     @Override
     public String toString() {
         return new StringJoiner(", ", Tag.class.getSimpleName() + "[", "]")
-                .add("id=" + id)
                 .add("name='" + name + "'")
                 .toString();
     }

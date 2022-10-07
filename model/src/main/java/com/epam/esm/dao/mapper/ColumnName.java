@@ -16,5 +16,12 @@ public enum ColumnName {
     public static final String LAST_UPDATE_DATE = "last_update_date";
 
 
+    /*
+    * gift_certificates_tag
+    * */
+
+    public static final String GIFT_CERTIFICATE_ID = "gift_certificate_id";
+    public static final String TAG_ID = "tag_id";
+
 
 }

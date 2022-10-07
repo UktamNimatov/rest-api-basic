@@ -1,21 +1,19 @@
 package com.epam.esm.dao;
 
+import com.epam.esm.entity.Entity;
+import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
+import com.epam.esm.exception.DaoException;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface TagDao<T extends Tag> {
+public interface TagDao<T> extends EntityDao<Tag> {
 
-    boolean insert(T tag);
+    boolean insert(Tag tag) throws DaoException;
 
-    Optional<T> findById(long id);
+    List<T> findTagsOfCertificate(long certificateId) throws DaoException;
 
-    Optional<T> findByName(String name);
+    boolean connectGiftCertificates(List<GiftCertificate> giftCertificates, long tagId) throws DaoException;
 
-    List<T> findAll();
-
-    List<T> findTagsOfCertificate(long certificateId);
-
-    boolean delete(long id);
 }

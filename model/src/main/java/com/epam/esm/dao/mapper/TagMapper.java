@@ -1,8 +1,8 @@
 package com.epam.esm.dao.mapper;
 
 import com.epam.esm.entity.Tag;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 
@@ -11,8 +11,8 @@ import java.sql.SQLException;
 import java.util.Optional;
 
 @Component
-public class TagMapper implements RowMapper<Optional<Tag>> {
-    private static final Logger logger = LoggerFactory.getLogger(TagMapper.class);
+public class TagMapper implements EntityMapper<Tag> {
+    private static final Logger logger = LogManager.getLogger();
 
     @Override
     public Optional<Tag> mapRow(ResultSet rs, int rowNum) {
