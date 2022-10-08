@@ -37,6 +37,7 @@ public class GiftCertificateServiceImpl extends AbstractEntityService<GiftCertif
     }
 
     @Override
+    @Transactional
     public boolean insert(GiftCertificate giftCertificate) throws InvalidFieldException, DuplicateResourceException, ServiceException {
         if (!giftCertificateValidator.checkGiftCertificate(giftCertificate))
             throw new InvalidFieldException(INVALID_GIFT_CERTIFICATE, giftCertificate.toString());
@@ -75,6 +76,16 @@ public class GiftCertificateServiceImpl extends AbstractEntityService<GiftCertif
     public boolean connectTags(List<Tag> tags, long giftCertificateId) throws ServiceException {
         try {
             return giftCertificateDao.connectTags(tags, giftCertificateId);
+        } catch (DaoException daoException) {
+            throw new ServiceException(daoException);
+        }
+    }
+
+    @Override
+    @Transactional
+    public boolean disconnectTags(long giftCertificateId) throws ServiceException {
+        try {
+            return giftCertificateDao.disconnectTags(giftCertificateId);
         } catch (DaoException daoException) {
             throw new ServiceException(daoException);
         }

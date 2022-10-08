@@ -18,4 +18,6 @@ public interface GiftCertificateService<T> extends EntityService<GiftCertificate
     boolean update(T giftCertificate) throws ServiceException;
 
     boolean connectTags(List<Tag> tags, long giftCertificateId) throws ServiceException;
+
+    boolean disconnectTags(long giftCertificateId) throws ServiceException;
 }

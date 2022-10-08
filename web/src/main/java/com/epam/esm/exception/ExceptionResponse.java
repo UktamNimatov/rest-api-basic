@@ -1,10 +1,10 @@
 package com.epam.esm.exception;
 
 public class ExceptionResponse {
-    private final String errorMessage;
-    private final int errorCode;
+    private String errorMessage;
+    private String errorCode;
 
-    public ExceptionResponse(String errorMessage, int errorCode) {
+    public ExceptionResponse(String errorMessage, String errorCode) {
         this.errorMessage = errorMessage;
         this.errorCode = errorCode;
     }
@@ -13,7 +13,15 @@ public class ExceptionResponse {
         return errorMessage;
     }
 
-    public int getErrorCode() {
+    public String getErrorCode() {
         return errorCode;
+    }
+
+    public void setErrorMessage(String errorMessage) {
+        this.errorMessage = errorMessage;
+    }
+
+    public void setErrorCode(String errorCode) {
+        this.errorCode = errorCode;
     }
 }

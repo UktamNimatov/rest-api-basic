@@ -1,10 +1,14 @@
 package com.epam.esm.dao.mapper;
 
+import com.epam.esm.dao.GiftCertificateDao;
+import com.epam.esm.dao.TagDao;
 import com.epam.esm.entity.Entity;
 import com.epam.esm.entity.GiftCertificate;
+import com.epam.esm.entity.Tag;
 import com.epam.esm.exception.DaoException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.RowMapperResultSetExtractor;
 import org.springframework.stereotype.Component;
@@ -13,12 +17,20 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 @Component
 public class GiftCertificateMapper implements EntityMapper<GiftCertificate> {
     private static final Logger logger = LogManager.getLogger();
+    private TagDao<Tag> tagDao;
+
+    @Autowired
+    public GiftCertificateMapper(TagDao<Tag> tagDao) {
+        this.tagDao = tagDao;
+    }
 
     @Override
     public Optional<GiftCertificate> mapRow(ResultSet rs, int rowNum) {
@@ -37,10 +49,14 @@ public class GiftCertificateMapper implements EntityMapper<GiftCertificate> {
                 .toLocalDateTime().atZone(ZoneOffset.UTC)
                         .format(DateTimeFormatter.ISO_INSTANT));
             }
+            List<Tag> tagList = tagDao.findTagsOfCertificate(giftCertificate.getId());
+            giftCertificate.setTagList(tagList);
+
             return Optional.of(giftCertificate);
-        }catch (SQLException sqlException) {
+        }catch (SQLException | DaoException sqlException) {
             logger.error("error in row mapping tag", sqlException);
         }
         return Optional.empty();
     }
+    
 }

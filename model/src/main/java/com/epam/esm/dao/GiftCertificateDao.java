@@ -16,4 +16,6 @@ public interface GiftCertificateDao<T> extends EntityDao<GiftCertificate> {
     boolean update(T giftCertificate) throws DaoException;
 
     boolean connectTags(List<Tag> tags, long giftCertificateId) throws DaoException;
+
+    boolean disconnectTags(long giftCertificateId) throws DaoException;
 }

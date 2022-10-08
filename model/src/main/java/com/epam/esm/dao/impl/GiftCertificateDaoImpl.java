@@ -29,6 +29,7 @@ public class GiftCertificateDaoImpl extends AbstractEntityDao<GiftCertificate> i
     private static final String SELECT_GIFT_CERTIFICATES_OF_TAG = "SELECT * FROM gift_certificates_tags WHERE tag_id=?";
     private static final String INSERT_INTO_GIFT_CERTIFICATES_TAGS = "INSERT INTO gift_certificates_tags (gift_certificate_id, tag_id) VALUES(?, ?)";
     private static final String INSERT = "INSERT INTO gift_certificates (name, description, price, duration, create_date, last_update_date) values (?, ?, ?, ?, ?, ?)";
+    private static final String DISCONNECT_TAGS = "DELETE FROM gift_certificates_tags WHERE gift_certificate_id=?";
 
     @Autowired
     public GiftCertificateDaoImpl(JdbcTemplate jdbcTemplate, GiftCertificateMapper giftCertificateMapper, GiftCertificatesTagsMapper giftCertificatesTagsMapper) {
@@ -98,8 +99,18 @@ public class GiftCertificateDaoImpl extends AbstractEntityDao<GiftCertificate> i
     @Override
     public boolean connectTags(List<Tag> tags, long giftCertificateId) throws DaoException {
         try {
+
             return tags.stream().allMatch(tag ->
                  jdbcTemplate.update(INSERT_INTO_GIFT_CERTIFICATES_TAGS, giftCertificateId, tag.getId()) == 1);
+        }catch (DataAccessException exception) {
+            throw new DaoException(exception);
+        }
+    }
+
+    @Override
+    public boolean disconnectTags(long giftCertificateId) throws DaoException {
+        try {
+            return jdbcTemplate.update(DISCONNECT_TAGS, giftCertificateId) >= 0;
         }catch (DataAccessException exception) {
             throw new DaoException(exception);
         }

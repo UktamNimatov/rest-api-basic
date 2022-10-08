@@ -57,7 +57,7 @@ public class TagDaoImpl extends AbstractEntityDao<Tag> implements TagDao<Tag>{
             List<GiftCertificatesTags> giftCertificatesTagsList = findGiftCertificatesTagsListFromQuery(certificateId);
 
             for (GiftCertificatesTags giftCertificatesTags : giftCertificatesTagsList) {
-                Optional<Tag> optionalGiftCertificate = findById(giftCertificatesTags.getGiftCertificateId());
+                Optional<Tag> optionalGiftCertificate = findById(giftCertificatesTags.getTagId());
                 optionalGiftCertificate.ifPresent(tagList::add);
             }
             return tagList;
