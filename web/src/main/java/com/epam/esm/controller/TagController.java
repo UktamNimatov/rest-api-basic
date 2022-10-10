@@ -1,6 +1,10 @@
 package com.epam.esm.controller;
 
+import com.epam.esm.constant.ConstantMessages;
+import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
+import com.epam.esm.exception.InvalidFieldException;
+import com.epam.esm.exception.ResourceNotFoundException;
 import com.epam.esm.exception.ServiceException;
 import com.epam.esm.service.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.awt.*;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/tags")
@@ -27,9 +32,14 @@ public class TagController {
         return tagService.findAll();
     }
 
-    @GetMapping("/name")
-    public Tag findByName() throws ServiceException {
-            return tagService.findByName("#circular").get();
+    @GetMapping("/{id}")
+    public Tag getOne(@PathVariable long id) throws ServiceException, ResourceNotFoundException {
+        return tagService.findById(id).get();
+    }
+
+    @GetMapping("/name/{name}")
+    public Tag findByName(@PathVariable String name) throws ServiceException, ResourceNotFoundException {
+            return tagService.findByName(name).get();
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -37,7 +47,16 @@ public class TagController {
         if (tagService.insert(tag)) {
             return new ResponseEntity<>(tag, HttpStatus.CREATED);
         }else {
-            throw new ServiceException("error");
+            return new ResponseEntity<>(tag, HttpStatus.BAD_REQUEST);
         }
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteTag(@PathVariable long id) throws ServiceException {
+        if (tagService.deleteById(id)) {
+            return ResponseEntity.status(HttpStatus.OK).body(ConstantMessages.SUCCESSFULLY_DELETED + id);
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ConstantMessages.DELETE_FAILED + id);
+    }
+
 }

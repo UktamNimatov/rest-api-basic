@@ -11,6 +11,7 @@ import com.epam.esm.exception.ServiceException;
 import com.epam.esm.service.AbstractEntityService;
 import com.epam.esm.service.GiftCertificateService;
 import com.epam.esm.validator.GiftCertificateValidator;
+import com.epam.esm.validator.TagValidator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,15 +26,17 @@ public class GiftCertificateServiceImpl extends AbstractEntityService<GiftCertif
 
     private final GiftCertificateDao<GiftCertificate> giftCertificateDao;
     private final GiftCertificateValidator giftCertificateValidator;
+    private final TagValidator tagValidator;
 
     private static final String INVALID_GIFT_CERTIFICATE = "INVALID_GIFT_CERTIFICATE";
     private static final String EXISTING_GIFT_CERTIFICATE_NAME = "Gift certificate already exists with this name";
 
     @Autowired
-    public GiftCertificateServiceImpl(AbstractEntityDao<GiftCertificate> abstractEntityDao, GiftCertificateDao<GiftCertificate> giftCertificateDao, GiftCertificateValidator giftCertificateValidator) {
+    public GiftCertificateServiceImpl(AbstractEntityDao<GiftCertificate> abstractEntityDao, GiftCertificateDao<GiftCertificate> giftCertificateDao, GiftCertificateValidator giftCertificateValidator, TagValidator tagValidator) {
         super(abstractEntityDao);
         this.giftCertificateDao = giftCertificateDao;
         this.giftCertificateValidator = giftCertificateValidator;
+        this.tagValidator = tagValidator;
     }
 
     @Override
@@ -63,9 +66,12 @@ public class GiftCertificateServiceImpl extends AbstractEntityService<GiftCertif
 
     @Override
     @Transactional
-    public boolean update(GiftCertificate giftCertificate) throws ServiceException {
+    public boolean update(GiftCertificate giftCertificate) throws ServiceException, InvalidFieldException {
         try {
-            return giftCertificateDao.update(giftCertificate);
+            if (!giftCertificateValidator.checkName(giftCertificate.getName()))
+                throw new InvalidFieldException(INVALID_GIFT_CERTIFICATE, giftCertificate.toString());
+                return giftCertificateDao.update(giftCertificate);
+
         } catch (DaoException daoException) {
             throw new ServiceException(daoException);
         }

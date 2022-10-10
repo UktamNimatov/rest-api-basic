@@ -2,7 +2,7 @@ package com.epam.esm.exception;
 
 public class InvalidFieldException extends Exception{
     private String errorCode;
-    private String message;
+    private String errorMessage;
 
     public String getErrorCode() {
         return errorCode;
@@ -14,16 +14,20 @@ public class InvalidFieldException extends Exception{
 
     @Override
     public String getMessage() {
-        return message;
+        return errorMessage;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
+    public String getErrorMessage() {
+        return errorMessage;
+    }
+
+    public void setErrorMessage(String errorMessage) {
+        this.errorMessage = errorMessage;
     }
 
     public InvalidFieldException(String errorCode, String message) {
         this.errorCode = errorCode;
-        this.message = message;
+        this.errorMessage = message;
     }
 
     public InvalidFieldException(String message, Throwable cause) {

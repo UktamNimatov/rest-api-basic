@@ -3,8 +3,9 @@ package com.epam.esm.service;
 import com.epam.esm.dao.AbstractEntityDao;
 import com.epam.esm.entity.Entity;
 import com.epam.esm.exception.DaoException;
+import com.epam.esm.exception.ResourceNotFoundException;
 import com.epam.esm.exception.ServiceException;
-import org.springframework.stereotype.Service;
+import com.epam.esm.constant.ConstantMessages;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -17,23 +18,12 @@ public abstract class AbstractEntityService<T extends Entity> implements EntityS
         this.abstractEntityDao = abstractEntityDao;
     }
 
-//    @Override
-//    @Transactional
-//    public boolean insert(T entity) throws ServiceException {
-//        try {
-//            return abstractEntityDao.insert(entity);
-//        } catch (DaoException daoException) {
-//            throw new ServiceException(daoException);
-//        }
-//    }
-
     @Override
-    public Optional<T> findById(long id) throws ServiceException {
-        try {
-            return abstractEntityDao.findById(id);
-        } catch (DaoException daoException) {
-            throw new ServiceException(daoException);
+    public Optional<T> findById(long id) throws ResourceNotFoundException {
+        if (!abstractEntityDao.findById(id).isPresent()) {
+            throw new ResourceNotFoundException(String.valueOf(ConstantMessages.ERROR_CODE_404), ConstantMessages.RESOURCE_NOT_FOUND);
         }
+        return abstractEntityDao.findById(id);
     }
 
     @Override
@@ -56,11 +46,10 @@ public abstract class AbstractEntityService<T extends Entity> implements EntityS
     }
 
     @Override
-    public Optional<T> findByName(String name) throws ServiceException {
-        try {
-            return abstractEntityDao.findByName(name);
-        } catch (DaoException daoException) {
-            throw new ServiceException(daoException);
+    public Optional<T> findByName(String name) throws ResourceNotFoundException {
+        if (!abstractEntityDao.findByName(name).isPresent()) {
+            throw new ResourceNotFoundException(String.valueOf(ConstantMessages.ERROR_CODE_404), ConstantMessages.RESOURCE_NOT_FOUND);
         }
+            return abstractEntityDao.findByName(name);
     }
 }

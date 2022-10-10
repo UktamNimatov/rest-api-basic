@@ -2,18 +2,21 @@ package com.epam.esm.dao.impl;
 
 import com.epam.esm.dao.AbstractEntityDao;
 import com.epam.esm.dao.GiftCertificateDao;
-import com.epam.esm.dao.mapper.EntityMapper;
+import com.epam.esm.dao.TagDao;
 import com.epam.esm.dao.mapper.GiftCertificateMapper;
 import com.epam.esm.dao.mapper.GiftCertificatesTagsMapper;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.GiftCertificatesTags;
 import com.epam.esm.entity.Tag;
 import com.epam.esm.exception.DaoException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import javax.swing.event.ListDataEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -21,9 +24,12 @@ import java.util.stream.Collectors;
 
 @Repository
 public class GiftCertificateDaoImpl extends AbstractEntityDao<GiftCertificate> implements GiftCertificateDao<GiftCertificate> {
+    private static final Logger logger = LogManager.getLogger();
+
     private final JdbcTemplate jdbcTemplate;
     private final GiftCertificateMapper giftCertificateMapper;
     private final GiftCertificatesTagsMapper giftCertificatesTagsMapper;
+    private final TagDao<Tag> tagDao;
 
     private static final String UPDATE_GIFT_CERTIFICATE = "UPDATE gift_certificates SET name=?, description=?, price=?, duration=?, create_date=?, last_update_date=? WHERE id=?";
     private static final String SELECT_GIFT_CERTIFICATES_OF_TAG = "SELECT * FROM gift_certificates_tags WHERE tag_id=?";
@@ -32,11 +38,12 @@ public class GiftCertificateDaoImpl extends AbstractEntityDao<GiftCertificate> i
     private static final String DISCONNECT_TAGS = "DELETE FROM gift_certificates_tags WHERE gift_certificate_id=?";
 
     @Autowired
-    public GiftCertificateDaoImpl(JdbcTemplate jdbcTemplate, GiftCertificateMapper giftCertificateMapper, GiftCertificatesTagsMapper giftCertificatesTagsMapper) {
+    public GiftCertificateDaoImpl(JdbcTemplate jdbcTemplate, GiftCertificateMapper giftCertificateMapper, GiftCertificatesTagsMapper giftCertificatesTagsMapper, TagDao<Tag> tagDao) {
         super(jdbcTemplate, giftCertificateMapper);
         this.jdbcTemplate = jdbcTemplate;
         this.giftCertificateMapper = giftCertificateMapper;
         this.giftCertificatesTagsMapper = giftCertificatesTagsMapper;
+        this.tagDao = tagDao;
     }
 
     @Override
@@ -55,7 +62,7 @@ public class GiftCertificateDaoImpl extends AbstractEntityDao<GiftCertificate> i
                     giftCertificate.getCreateDate(),
                     giftCertificate.getLastUpdateDate()) == 1;
             if (insertResult && giftCertificate.getTagList() != null && findByName(giftCertificate.getName()).isPresent()) {
-               return connectTags(giftCertificate.getTagList(), findByName(giftCertificate.getName()).get().getId());
+                return connectTags(giftCertificate.getTagList(), findByName(giftCertificate.getName()).get().getId());
             }
             return false;
         } catch (DataAccessException e) {
@@ -83,7 +90,7 @@ public class GiftCertificateDaoImpl extends AbstractEntityDao<GiftCertificate> i
     @Override
     public boolean update(GiftCertificate giftCertificate) throws DaoException {
         try {
-            return jdbcTemplate.update(UPDATE_GIFT_CERTIFICATE,
+            boolean updatingGiftCertificate = jdbcTemplate.update(UPDATE_GIFT_CERTIFICATE,
                     giftCertificate.getName(),
                     giftCertificate.getDescription(),
                     giftCertificate.getPrice(),
@@ -91,6 +98,10 @@ public class GiftCertificateDaoImpl extends AbstractEntityDao<GiftCertificate> i
                     giftCertificate.getCreateDate(),
                     giftCertificate.getLastUpdateDate(),
                     giftCertificate.getId()) == 1;
+           if (giftCertificate.getTagList() != null && updatingGiftCertificate && disconnectTags(giftCertificate.getId())) {
+               return connectTags(giftCertificate.getTagList(), giftCertificate.getId());
+           }
+           return updatingGiftCertificate;  
         } catch (DataAccessException e) {
             throw new DaoException(e);
         }
@@ -99,10 +110,10 @@ public class GiftCertificateDaoImpl extends AbstractEntityDao<GiftCertificate> i
     @Override
     public boolean connectTags(List<Tag> tags, long giftCertificateId) throws DaoException {
         try {
-
+            tags = getTagsByName(tags);
             return tags.stream().allMatch(tag ->
-                 jdbcTemplate.update(INSERT_INTO_GIFT_CERTIFICATES_TAGS, giftCertificateId, tag.getId()) == 1);
-        }catch (DataAccessException exception) {
+                    jdbcTemplate.update(INSERT_INTO_GIFT_CERTIFICATES_TAGS, giftCertificateId, tag.getId()) == 1);
+        } catch (DataAccessException exception) {
             throw new DaoException(exception);
         }
     }
@@ -111,7 +122,7 @@ public class GiftCertificateDaoImpl extends AbstractEntityDao<GiftCertificate> i
     public boolean disconnectTags(long giftCertificateId) throws DaoException {
         try {
             return jdbcTemplate.update(DISCONNECT_TAGS, giftCertificateId) >= 0;
-        }catch (DataAccessException exception) {
+        } catch (DataAccessException exception) {
             throw new DaoException(exception);
         }
     }
@@ -126,6 +137,26 @@ public class GiftCertificateDaoImpl extends AbstractEntityDao<GiftCertificate> i
         } catch (DataAccessException e) {
             throw new DaoException(e);
         }
+    }
+
+    private List<Tag> getTagsByName(List<Tag> tagList) throws DaoException {
+        List<Tag> toReturn = new ArrayList<>();
+        try {
+            List<String> tagNames = new ArrayList<>();
+            tagList.forEach(tag -> tagNames.add(tag.getName()));
+            List<Optional<Tag>> optionalTagsList = new ArrayList<>();
+
+            for (String tagName : tagNames) {
+                if (!tagDao.findByName(tagName).isPresent()) {
+                    tagDao.insert(new Tag(tagName));
+                }
+                optionalTagsList.add(tagDao.findByName(tagName));
+            }
+            optionalTagsList.stream().filter(Optional::isPresent).forEach(optionalTag -> toReturn.add(optionalTag.get()));
+        } catch (DaoException exception) {
+            logger.error("error in converting tag names to tag objects", exception);
+        }
+        return toReturn;
     }
 
 }

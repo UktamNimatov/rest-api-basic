@@ -15,7 +15,7 @@ public interface GiftCertificateService<T> extends EntityService<GiftCertificate
 
     List<T> findGiftCertificatesOfTag(long tagId) throws ServiceException;
 
-    boolean update(T giftCertificate) throws ServiceException;
+    boolean update(T giftCertificate) throws ServiceException, InvalidFieldException;
 
     boolean connectTags(List<Tag> tags, long giftCertificateId) throws ServiceException;
 

@@ -1,9 +1,11 @@
 package com.epam.esm.controller;
 
+import com.epam.esm.constant.ConstantMessages;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
 import com.epam.esm.exception.DuplicateResourceException;
 import com.epam.esm.exception.InvalidFieldException;
+import com.epam.esm.exception.ResourceNotFoundException;
 import com.epam.esm.exception.ServiceException;
 import com.epam.esm.service.GiftCertificateService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/giftCertificates")
@@ -30,13 +33,14 @@ public class GiftCertificateController {
         return giftCertificateService.findAll();
     }
 
-    @GetMapping("/{giftCertificateId}")
-    public GiftCertificate getOne(@PathVariable long giftCertificateId) throws ServiceException {
-        GiftCertificate giftCertificate = new GiftCertificate();
-        if (giftCertificateService.findById(giftCertificateId).isPresent()) {
-            giftCertificate = giftCertificateService.findById(giftCertificateId).get();
-        }
-        return giftCertificate;
+    @GetMapping("/{id}")
+    public GiftCertificate getOne(@PathVariable long id) throws ServiceException, ResourceNotFoundException {
+        return giftCertificateService.findById(id).get();
+    }
+
+    @GetMapping("/name/{name}")
+    public GiftCertificate findByName(@PathVariable String name) throws ResourceNotFoundException, ServiceException {
+        return giftCertificateService.findByName(name).get();
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -44,7 +48,24 @@ public class GiftCertificateController {
         if (giftCertificateService.insert(giftCertificate)) {
             return new ResponseEntity<>(giftCertificate, HttpStatus.CREATED);
         }else {
-            throw new ServiceException("error");
+            return new ResponseEntity<>(giftCertificate, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteGiftCertificate(@PathVariable long id) throws ServiceException {
+       if (giftCertificateService.deleteById(id)) {
+           return ResponseEntity.status(HttpStatus.OK).body(ConstantMessages.SUCCESSFULLY_DELETED + id);
+       }
+       return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ConstantMessages.DELETE_FAILED + id);
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<GiftCertificate> updateGiftCertificate(@RequestBody GiftCertificate giftCertificate) throws ServiceException, InvalidFieldException {
+        if (giftCertificateService.update(giftCertificate)) {
+            return new ResponseEntity<>(giftCertificate, HttpStatus.ACCEPTED);
+        }else {
+            return new ResponseEntity<>(giftCertificate, HttpStatus.NOT_MODIFIED);
         }
     }
 
