@@ -3,6 +3,7 @@ package com.epam.esm.controller;
 import com.epam.esm.constant.ConstantMessages;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
+import com.epam.esm.exception.DuplicateResourceException;
 import com.epam.esm.exception.InvalidFieldException;
 import com.epam.esm.exception.ResourceNotFoundException;
 import com.epam.esm.exception.ServiceException;
@@ -39,24 +40,19 @@ public class TagController {
 
     @GetMapping("/name/{name}")
     public Tag findByName(@PathVariable String name) throws ServiceException, ResourceNotFoundException {
-            return tagService.findByName(name).get();
+        return tagService.findByName(name).get();
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Tag> insertTag(@RequestBody Tag tag) throws ServiceException {
-        if (tagService.insert(tag)) {
-            return new ResponseEntity<>(tag, HttpStatus.CREATED);
-        }else {
-            return new ResponseEntity<>(tag, HttpStatus.BAD_REQUEST);
-        }
+    public ResponseEntity<Tag> insertTag(@RequestBody Tag tag) throws ServiceException, InvalidFieldException, DuplicateResourceException {
+        tagService.insert(tag);
+        return new ResponseEntity<>(tag, HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteTag(@PathVariable long id) throws ServiceException {
-        if (tagService.deleteById(id)) {
-            return ResponseEntity.status(HttpStatus.OK).body(ConstantMessages.SUCCESSFULLY_DELETED + id);
-        }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ConstantMessages.DELETE_FAILED + id);
+    public ResponseEntity<String> deleteTag(@PathVariable long id) throws ServiceException, ResourceNotFoundException {
+        tagService.deleteById(id);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(ConstantMessages.SUCCESSFULLY_DELETED + id);
     }
 
 }

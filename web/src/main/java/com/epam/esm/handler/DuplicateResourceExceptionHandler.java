@@ -14,8 +14,8 @@ public class DuplicateResourceExceptionHandler {
     @ExceptionHandler(DuplicateResourceException.class)
     public ResponseEntity<ExceptionResponse> handle(DuplicateResourceException exception) {
         ExceptionResponse exceptionResponse =
-                new ExceptionResponse(exception.getLocalizedMessage(), exception.getErrorCode());
-        exceptionResponse.setErrorCode(httpStatus.value() + exception.getErrorCode());
+                new ExceptionResponse(exception.getErrorMessage(), exception.getErrorCode());
+//        exceptionResponse.setErrorCode(httpStatus.value() + exception.getErrorCode());
         return new ResponseEntity<>(exceptionResponse, httpStatus);
     }
 }

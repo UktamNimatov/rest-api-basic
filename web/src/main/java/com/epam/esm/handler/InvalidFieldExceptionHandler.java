@@ -16,7 +16,7 @@ public class InvalidFieldExceptionHandler {
     public ResponseEntity<ExceptionResponse> handleException(InvalidFieldException invalidFieldException) {
         ExceptionResponse exceptionResponse =
                 new ExceptionResponse(invalidFieldException.getErrorMessage(), invalidFieldException.getErrorCode());
-        exceptionResponse.setErrorCode(httpStatus.value() + invalidFieldException.getErrorCode());
+//        exceptionResponse.setErrorCode(httpStatus.value() + invalidFieldException.getErrorCode());
         return new ResponseEntity<>(exceptionResponse, httpStatus);
     }
 }

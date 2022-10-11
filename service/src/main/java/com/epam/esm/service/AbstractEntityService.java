@@ -21,7 +21,8 @@ public abstract class AbstractEntityService<T extends Entity> implements EntityS
     @Override
     public Optional<T> findById(long id) throws ResourceNotFoundException {
         if (!abstractEntityDao.findById(id).isPresent()) {
-            throw new ResourceNotFoundException(String.valueOf(ConstantMessages.ERROR_CODE_404), ConstantMessages.RESOURCE_NOT_FOUND);
+            throw new ResourceNotFoundException(String.valueOf(ConstantMessages.ERROR_CODE_404),
+                    ConstantMessages.RESOURCE_NOT_FOUND);
         }
         return abstractEntityDao.findById(id);
     }
@@ -37,9 +38,11 @@ public abstract class AbstractEntityService<T extends Entity> implements EntityS
 
     @Override
     @Transactional
-    public boolean deleteById(long id) throws ServiceException {
+    public boolean deleteById(long id) throws ServiceException, ResourceNotFoundException {
         try {
-            return abstractEntityDao.deleteById(id);
+            if (abstractEntityDao.deleteById(id)) return true;
+            throw new ResourceNotFoundException(String.valueOf(ConstantMessages.ERROR_CODE_404),
+                    ConstantMessages.RESOURCE_NOT_FOUND);
         } catch (DaoException daoException) {
             throw new ServiceException(daoException);
         }
@@ -48,7 +51,8 @@ public abstract class AbstractEntityService<T extends Entity> implements EntityS
     @Override
     public Optional<T> findByName(String name) throws ResourceNotFoundException {
         if (!abstractEntityDao.findByName(name).isPresent()) {
-            throw new ResourceNotFoundException(String.valueOf(ConstantMessages.ERROR_CODE_404), ConstantMessages.RESOURCE_NOT_FOUND);
+            throw new ResourceNotFoundException(String.valueOf(ConstantMessages.ERROR_CODE_404),
+                    ConstantMessages.RESOURCE_NOT_FOUND);
         }
             return abstractEntityDao.findByName(name);
     }

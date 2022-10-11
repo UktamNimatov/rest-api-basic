@@ -14,12 +14,10 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Repository;
 
-import javax.swing.event.ListDataEvent;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Repository
@@ -36,6 +34,7 @@ public class GiftCertificateDaoImpl extends AbstractEntityDao<GiftCertificate> i
     private static final String INSERT_INTO_GIFT_CERTIFICATES_TAGS = "INSERT INTO gift_certificates_tags (gift_certificate_id, tag_id) VALUES(?, ?)";
     private static final String INSERT = "INSERT INTO gift_certificates (name, description, price, duration, create_date, last_update_date) values (?, ?, ?, ?, ?, ?)";
     private static final String DISCONNECT_TAGS = "DELETE FROM gift_certificates_tags WHERE gift_certificate_id=?";
+    private static final String SEARCH_QUERY = "SELECT id, name, description, price, duration, create_date, last_update_date FROM gift_certificates WHERE name LIKE CONCAT ('%', ?, '%') OR description LIKE CONCAT ('%', ?, '%')";
 
     @Autowired
     public GiftCertificateDaoImpl(JdbcTemplate jdbcTemplate, GiftCertificateMapper giftCertificateMapper, GiftCertificatesTagsMapper giftCertificatesTagsMapper, TagDao<Tag> tagDao) {
@@ -72,8 +71,9 @@ public class GiftCertificateDaoImpl extends AbstractEntityDao<GiftCertificate> i
 
 
     @Override
-    public List<GiftCertificate> findGiftCertificatesOfTag(long tagId) throws DaoException {
+    public List<GiftCertificate> findGiftCertificatesOfTag(String tagName) throws DaoException {
         try {
+            long tagId = tagDao.findByName(tagName).get().getId();
             List<GiftCertificate> giftCertificateList = new ArrayList<>();
             List<GiftCertificatesTags> giftCertificatesTagsList = findGiftCertificatesTagsListFromQuery(tagId);
 
@@ -98,10 +98,10 @@ public class GiftCertificateDaoImpl extends AbstractEntityDao<GiftCertificate> i
                     giftCertificate.getCreateDate(),
                     giftCertificate.getLastUpdateDate(),
                     giftCertificate.getId()) == 1;
-           if (giftCertificate.getTagList() != null && updatingGiftCertificate && disconnectTags(giftCertificate.getId())) {
-               return connectTags(giftCertificate.getTagList(), giftCertificate.getId());
-           }
-           return updatingGiftCertificate;  
+            if (giftCertificate.getTagList() != null && updatingGiftCertificate && disconnectTags(giftCertificate.getId())) {
+                return connectTags(giftCertificate.getTagList(), giftCertificate.getId());
+            }
+            return updatingGiftCertificate;
         } catch (DataAccessException e) {
             throw new DaoException(e);
         }
@@ -124,6 +124,61 @@ public class GiftCertificateDaoImpl extends AbstractEntityDao<GiftCertificate> i
             return jdbcTemplate.update(DISCONNECT_TAGS, giftCertificateId) >= 0;
         } catch (DataAccessException exception) {
             throw new DaoException(exception);
+        }
+    }
+
+    @Override
+    public List<GiftCertificate> searchByNameOrDescription(String searchKey) throws DaoException {
+        try {
+            return jdbcTemplate.query(SEARCH_QUERY, giftCertificateMapper, searchKey, searchKey)
+                    .stream()
+                    .filter(Optional::isPresent)
+                    .map(Optional::get)
+                    .collect(Collectors.toList());
+        } catch (DataAccessException exception) {
+            throw new DaoException(exception);
+        }
+    }
+
+    @Override
+    public List<GiftCertificate> sortByRequirements(List<GiftCertificate> giftCertificatesList, @Nullable Map<String, String> requirements) {
+        if (requirements != null) {
+            for (Map.Entry<String, String> entry : requirements.entrySet()) {
+                if (entry.getKey().equalsIgnoreCase("name")) {
+                    sortByName(giftCertificatesList, entry.getValue());
+                }
+                if (entry.getKey().equalsIgnoreCase("createDate")) {
+                    sortByCreateDate(giftCertificatesList, entry.getValue());
+                }
+                if (entry.getKey().equalsIgnoreCase("lastUpdateDate")) {
+                    sortByLastUpdateDate(giftCertificatesList, entry.getValue());
+                }
+            }
+        }
+        return giftCertificatesList;
+    }
+
+    private void sortByName(List<GiftCertificate> giftCertificatesList, @Nullable String direction) {
+        if (direction != null && !direction.equalsIgnoreCase("desc")) {
+            giftCertificatesList.sort(Comparator.comparing(GiftCertificate::getName));
+        }else {
+            Collections.reverse(giftCertificatesList);
+        }
+    }
+
+    private void sortByCreateDate(List<GiftCertificate> giftCertificatesList, @Nullable String direction) {
+        if (direction != null && !direction.equalsIgnoreCase("desc")) {
+            giftCertificatesList.sort(Comparator.comparing(GiftCertificate::getCreateDate));
+        }else {
+            Collections.reverse(giftCertificatesList);
+        }
+    }
+
+    private void sortByLastUpdateDate(List<GiftCertificate> giftCertificatesList, @Nullable String direction) {
+        if (direction != null && !direction.equalsIgnoreCase("desc")) {
+            giftCertificatesList.sort(Comparator.comparing(GiftCertificate::getLastUpdateDate));
+        }else {
+            Collections.reverse(giftCertificatesList);
         }
     }
 

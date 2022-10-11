@@ -3,6 +3,8 @@ package com.epam.esm.service;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
 import com.epam.esm.exception.DaoException;
+import com.epam.esm.exception.DuplicateResourceException;
+import com.epam.esm.exception.InvalidFieldException;
 import com.epam.esm.exception.ServiceException;
 
 import java.util.List;
@@ -10,7 +12,7 @@ import java.util.Optional;
 
 public interface TagService<T> extends EntityService<Tag> {
 
-    boolean insert(Tag tag) throws ServiceException;
+    boolean insert(Tag tag) throws ServiceException, InvalidFieldException, DuplicateResourceException;
 
     List<T> findTagsOfCertificate(long certificateId) throws ServiceException;
 

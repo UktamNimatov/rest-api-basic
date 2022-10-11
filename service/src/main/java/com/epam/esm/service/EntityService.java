@@ -16,7 +16,7 @@ public interface EntityService<T extends Entity> {
 
     List<T> findAll() throws ServiceException;
 
-    boolean deleteById(long id) throws ServiceException;
+    boolean deleteById(long id) throws ServiceException, ResourceNotFoundException;
 
     Optional<T> findByName(String name) throws ServiceException, ResourceNotFoundException;
 

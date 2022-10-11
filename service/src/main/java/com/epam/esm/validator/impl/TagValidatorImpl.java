@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
 @Component
 public class TagValidatorImpl implements TagValidator {
 
-    private static final String NAME_PATTERN = "#[\\p{Alpha}]{3,50}";
+    private static final String NAME_PATTERN = "[\\p{Alpha}]{3,50}";
 
     @Override
     public boolean checkName(String name) {
