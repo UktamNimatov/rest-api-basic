@@ -8,10 +8,15 @@ import com.epam.esm.exception.InvalidFieldException;
 import com.epam.esm.exception.ResourceNotFoundException;
 import com.epam.esm.exception.ServiceException;
 import com.epam.esm.service.GiftCertificateService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.config.plugins.validation.constraints.NotBlank;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -22,6 +27,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/gift-certificates")
 public class GiftCertificateController {
+    private static final Logger logger = LogManager.getLogger();
 
     private final GiftCertificateService<GiftCertificate> giftCertificateService;
 
@@ -34,52 +40,37 @@ public class GiftCertificateController {
     public List<GiftCertificate> getAll(@RequestParam(required = false) String name,
                                         @RequestParam(required = false) String createDate,
                                         @RequestParam(required = false) String lastUpdateDate) throws ServiceException {
-//        List<GiftCertificate> allGiftCertificates = giftCertificateService.findAll();
-        Map<String, String> requirements = new HashMap<>();
-        if (name != null) {
-            requirements.put("name", name);
-        }
-
-        if (createDate != null) {
-            requirements.put("createDate", createDate);
-        }
-
-        if (lastUpdateDate != null) {
-            requirements.put("lastUpdateDate", lastUpdateDate);
-        }
+        Map<String, String> requirements = setSortRequirements(name, createDate, lastUpdateDate);
         return giftCertificateService.sortByRequirements(giftCertificateService.findAll(), requirements);
-//        if (name != null) {
-//            allGiftCertificates = giftCertificateService.sortByName(allGiftCertificates, name);
-//        }
-//
-//        if (createDate != null) {
-//            allGiftCertificates = giftCertificateService.sortByCreateDate(allGiftCertificates, createDate);
-//        }
-//
-//        if (lastUpdateDate != null) {
-//            allGiftCertificates = giftCertificateService.sortByLastUpdateDate(allGiftCertificates, createDate);
-//        }
-//        return allGiftCertificates;
     }
 
     @GetMapping("/{id}")
-    public GiftCertificate getOne(@PathVariable long id) throws ServiceException, ResourceNotFoundException {
+    public GiftCertificate getOne(@PathVariable("id") long id) throws ServiceException, ResourceNotFoundException {
         return giftCertificateService.findById(id).get();
     }
 
     @GetMapping("/name/{name}")
-    public GiftCertificate findByName(@PathVariable String name) throws ResourceNotFoundException, ServiceException {
+    public GiftCertificate findByName(@PathVariable("name") String name) throws ResourceNotFoundException, ServiceException {
         return giftCertificateService.findByName(name).get();
     }
 
     @GetMapping("/search/{searchKey}")
-    public List<GiftCertificate> findBySearch(@PathVariable String searchKey) throws ServiceException {
-        return giftCertificateService.searchByNameOrDescription(searchKey);
+    public List<GiftCertificate> findBySearch(@PathVariable("searchKey") String searchKey,
+                                              @RequestParam(required = false) String name,
+                                              @RequestParam(required = false) String createDate,
+                                              @RequestParam(required = false) String lastUpdateDate) throws ServiceException, ResourceNotFoundException {
+        Map<String, String> requirements = setSortRequirements(name, createDate, lastUpdateDate);
+        return giftCertificateService.sortByRequirements(giftCertificateService.searchByNameOrDescription(searchKey), requirements);
     }
 
     @GetMapping("/tagName/{tagName}")
-    public List<GiftCertificate> findByTagName(@PathVariable String tagName) throws ServiceException, ResourceNotFoundException {
-        return giftCertificateService.findGiftCertificatesOfTag(tagName);
+    public List<GiftCertificate> findByTagName(@PathVariable("tagName") String tagName,
+                                               @RequestParam(required = false) String name,
+                                               @RequestParam(required = false) String createDate,
+                                               @RequestParam(required = false) String lastUpdateDate) throws ServiceException, ResourceNotFoundException {
+        Map<String, String> requirements = setSortRequirements(name, createDate, lastUpdateDate);
+        logger.info(tagName + " is the tagName");
+        return giftCertificateService.sortByRequirements(giftCertificateService.findGiftCertificatesOfTag(tagName), requirements);
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -101,6 +92,24 @@ public class GiftCertificateController {
         }else {
             return new ResponseEntity<>(giftCertificate, HttpStatus.NOT_MODIFIED);
         }
+    }
+
+    private Map<String, String> setSortRequirements(@Nullable String name,
+                                                    @Nullable String createDate,
+                                                    @Nullable String lastUpdateDate) {
+        Map<String, String> requirements = new HashMap<>();
+        if (name != null) {
+            requirements.put("name", name);
+        }
+
+        if (createDate != null) {
+            requirements.put("createDate", createDate);
+        }
+
+        if (lastUpdateDate != null) {
+            requirements.put("lastUpdateDate", lastUpdateDate);
+        }
+        return requirements;
     }
 
 }

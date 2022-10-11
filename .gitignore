@@ -15,3 +15,5 @@ gradle
 
 out
 model/out/**
+
+service/logs/**

@@ -73,6 +73,7 @@ public class GiftCertificateDaoImpl extends AbstractEntityDao<GiftCertificate> i
     @Override
     public List<GiftCertificate> findGiftCertificatesOfTag(String tagName) throws DaoException {
         try {
+            logger.info("dao layer: tagName is " + tagName);
             long tagId = tagDao.findByName(tagName).get().getId();
             List<GiftCertificate> giftCertificateList = new ArrayList<>();
             List<GiftCertificatesTags> giftCertificatesTagsList = findGiftCertificatesTagsListFromQuery(tagId);
@@ -158,26 +159,29 @@ public class GiftCertificateDaoImpl extends AbstractEntityDao<GiftCertificate> i
         return giftCertificatesList;
     }
 
-    private void sortByName(List<GiftCertificate> giftCertificatesList, @Nullable String direction) {
-        if (direction != null && !direction.equalsIgnoreCase("desc")) {
+    private void sortByName(List<GiftCertificate> giftCertificatesList, String direction) {
+        if (!direction.equalsIgnoreCase("desc")) {
             giftCertificatesList.sort(Comparator.comparing(GiftCertificate::getName));
         }else {
+            giftCertificatesList.sort(Comparator.comparing(GiftCertificate::getName));
             Collections.reverse(giftCertificatesList);
         }
     }
 
-    private void sortByCreateDate(List<GiftCertificate> giftCertificatesList, @Nullable String direction) {
-        if (direction != null && !direction.equalsIgnoreCase("desc")) {
+    private void sortByCreateDate(List<GiftCertificate> giftCertificatesList, String direction) {
+        if (!direction.equalsIgnoreCase("desc")) {
             giftCertificatesList.sort(Comparator.comparing(GiftCertificate::getCreateDate));
         }else {
+            giftCertificatesList.sort(Comparator.comparing(GiftCertificate::getCreateDate));
             Collections.reverse(giftCertificatesList);
         }
     }
 
-    private void sortByLastUpdateDate(List<GiftCertificate> giftCertificatesList, @Nullable String direction) {
-        if (direction != null && !direction.equalsIgnoreCase("desc")) {
+    private void sortByLastUpdateDate(List<GiftCertificate> giftCertificatesList, String direction) {
+        if (!direction.equalsIgnoreCase("desc")) {
             giftCertificatesList.sort(Comparator.comparing(GiftCertificate::getLastUpdateDate));
         }else {
+            giftCertificatesList.sort(Comparator.comparing(GiftCertificate::getLastUpdateDate));
             Collections.reverse(giftCertificatesList);
         }
     }

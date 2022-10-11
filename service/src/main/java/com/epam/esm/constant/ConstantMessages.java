@@ -16,9 +16,11 @@ public enum ConstantMessages {
 
     public static final String INVALID_GIFT_CERTIFICATE = " Invalid gift certificate ";
     public static final String INVALID_TAG = " Invalid tag ";
+    public static final String INVALID_INPUT = " Invalid input ";
     public static final String INVALID_TAG_NAME = " Invalid tag name ";
 
     public static final String EXISTING_GIFT_CERTIFICATE_NAME = "Gift certificate already exists with this name";
     public static final String EXISTING_TAG_NAME = "Tag already exists with this name";
+
 
 }

@@ -16,8 +16,9 @@ import static java.time.ZonedDateTime.now;
 
 @Component
 public class GiftCertificateValidatorImpl implements GiftCertificateValidator {
-    private static final String NAME_REGEX = "[\\p{Alpha}]{3,50}";
+    private static final String NAME_REGEX = "[\\p{Alpha}\\p{Digit}]{3,50}";
     private static final String PRICE_REGEX = "^\\d{0,8}(\\.\\d{1,4})?$";
+    private static final String DESCRIPTION_REGEX = "^.{3,}$";
 
     private static final String INCORRECT_VALUE_PARAMETER = " - incorrect value";
 
@@ -28,13 +29,14 @@ public class GiftCertificateValidatorImpl implements GiftCertificateValidator {
 
     @Override
     public boolean checkDescription(String description) {
+        boolean min = Pattern.matches(DESCRIPTION_REGEX, description);
         if (description.contains("<script>") || description.contains("</script>")) {
             String newDescription;
             newDescription = description.replaceAll("<script>", "");
             newDescription = newDescription.replaceAll("</script>", "");
-            return description.equalsIgnoreCase(newDescription);
+            return Pattern.matches(DESCRIPTION_REGEX, newDescription);
         }
-        return true;
+        return min;
     }
 
     @Override

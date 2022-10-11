@@ -28,6 +28,7 @@ public abstract class AbstractEntityDao<T extends Entity> implements EntityDao<T
         this.entityMapper = entityMapper;
     }
 
+
     protected abstract String getTableName();
 
     private static final String INSERT_INTO = "INSERT INTO ";
@@ -81,6 +82,7 @@ public abstract class AbstractEntityDao<T extends Entity> implements EntityDao<T
     @Override
     public Optional<T> findByName(String name) {
         try {
+            logger.info("abstract entity dao: tagName " + name);
              return jdbcTemplate.queryForObject(SELECT_FROM + getTableName() + WHERE_NAME, entityMapper, name);
         } catch (DataAccessException e) {
             logger.error("error in getting one object from database");

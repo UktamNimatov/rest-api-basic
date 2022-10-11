@@ -21,7 +21,7 @@ public interface GiftCertificateService<T> extends EntityService<GiftCertificate
 
     boolean disconnectTags(long giftCertificateId) throws ServiceException;
 
-    List<T> searchByNameOrDescription(String searchKey) throws ServiceException;
+    List<T> searchByNameOrDescription(String searchKey) throws ServiceException, ResourceNotFoundException;
 
     List<T> sortByRequirements(List<T> giftCertificatesList, Map<String, String> requirements);
 }

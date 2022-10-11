@@ -8,8 +8,6 @@ import java.util.Optional;
 
 public interface EntityDao<T extends Entity> {
 
-//    boolean insert(T entity) throws DaoException;
-
     Optional<T> findById(long id) throws DaoException;
 
     List<T> findAll() throws DaoException;

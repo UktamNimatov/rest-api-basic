@@ -58,6 +58,7 @@ public class GiftCertificateServiceImpl extends AbstractEntityService<GiftCertif
     @Override
     public List<GiftCertificate> findGiftCertificatesOfTag(String tagName) throws ServiceException, ResourceNotFoundException {
         try {
+            logger.info("service layer: tagName is " + tagName);
             if (!tagDao.findByName(tagName).isPresent()) {
                 throw new ResourceNotFoundException(String.valueOf(ConstantMessages.ERROR_CODE_404),
                         ConstantMessages.INVALID_TAG_NAME);
@@ -102,29 +103,19 @@ public class GiftCertificateServiceImpl extends AbstractEntityService<GiftCertif
     }
 
     @Override
-    public List<GiftCertificate> searchByNameOrDescription(String searchKey) throws ServiceException {
+    public List<GiftCertificate> searchByNameOrDescription(String searchKey) throws ServiceException, ResourceNotFoundException {
         try {
-            return giftCertificateDao.searchByNameOrDescription(searchKey);
+            List<GiftCertificate> toReturn = giftCertificateDao.searchByNameOrDescription(searchKey);
+            if (!toReturn.isEmpty()) {
+                return toReturn;
+            }
+            throw new ResourceNotFoundException(String.valueOf(ConstantMessages.ERROR_CODE_404),
+                    ConstantMessages.RESOURCE_NOT_FOUND);
         } catch (DaoException daoException) {
             throw new ServiceException(daoException);
         }
     }
 
-//    @Override
-//    public List<GiftCertificate> sortByName(List<GiftCertificate> giftCertificatesList, @Nullable String direction) {
-//        return giftCertificateDao.sortByName(giftCertificatesList, direction);
-//    }
-//
-//    @Override
-//    public List<GiftCertificate> sortByCreateDate(List<GiftCertificate> giftCertificatesList, @Nullable String direction) {
-//        return giftCertificateDao.sortByCreateDate(giftCertificatesList, direction);
-//    }
-//
-//    @Override
-//    public List<GiftCertificate> sortByLastUpdateDate(List<GiftCertificate> giftCertificatesList, @Nullable String direction) {
-//        return giftCertificateDao.sortByLastUpdateDate(giftCertificatesList, direction);
-//    }
-//
     @Override
     public List<GiftCertificate> sortByRequirements(List<GiftCertificate> giftCertificatesList, Map<String, String> requirements) {
         return giftCertificateDao.sortByRequirements(giftCertificatesList, requirements);
