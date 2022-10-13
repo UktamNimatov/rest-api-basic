@@ -19,15 +19,16 @@ create table `gift_certificates_tags` (
 `id` INTEGER NOT NULL auto_increment,
 `gift_certificate_id` INTEGER NOT NULL,
 `tag_id` INTEGER NOT NULL,
-CONSTRAINT `fk_gift_certificate_id` FOREIGN KEY (`gift_certificate_id`) REFERENCES `gift_certificates` (`id`),
-CONSTRAINT `fk_tag_id` FOREIGN KEY (`tag_id`) REFERENCES `tags` (`id`)
-);
+primary key(`id`),
+CONSTRAINT `fk_gift_certificate_id` FOREIGN KEY (`gift_certificate_id`) REFERENCES `gift_certificates` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+CONSTRAINT `fk_tag_id` FOREIGN KEY (`tag_id`) REFERENCES `tags` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+                                      )ENGINE=INNODB DEFAULT CHARACTER SET utf8;;
 
-INSERT INTO `tags` (`id` ,`name`) VALUES('1','#funny');
-INSERT INTO `tags` (`id` ,`name`) VALUES('2','#cool');
-INSERT INTO `tags` (`id` ,`name`) VALUES('3','#warm');
-INSERT INTO `tags` (`id` ,`name`) VALUES('4','#cold');
-INSERT INTO `tags` (`id` ,`name`) VALUES('5','#relax');
+INSERT INTO `tags` (`id` ,`name`) VALUES('1','funny');
+INSERT INTO `tags` (`id` ,`name`) VALUES('2','cool');
+INSERT INTO `tags` (`id` ,`name`) VALUES('3','warm');
+INSERT INTO `tags` (`id` ,`name`) VALUES('4','cold');
+INSERT INTO `tags` (`id` ,`name`) VALUES('5','relax');
 
 INSERT INTO `gift_certificates` (`id`, `name`, `description`, `price`, `duration`, `create_date`)
 VALUES(1, 'Car', 'Fast car', '99.99', 4, '2011-11-19T11:10:11.111');

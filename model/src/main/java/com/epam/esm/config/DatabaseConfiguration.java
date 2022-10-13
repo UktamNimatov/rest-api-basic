@@ -22,7 +22,6 @@ import java.io.InputStream;
 import java.util.Properties;
 
 @Configuration
-//@PropertySource({"classpath:/config/database.yaml"})
 public class DatabaseConfiguration {
     private static final Logger logger = LogManager.getLogger();
 
@@ -83,7 +82,7 @@ public class DatabaseConfiguration {
 //    }
 
 
-
+//    @Profile("prod")
     @Bean
     public DataSource dataSource(HikariConfig hikariConfig) {
         logger.info(">?>?>?>?>?>?");
@@ -98,4 +97,13 @@ public class DatabaseConfiguration {
     public JdbcTemplate jdbcTemplate(DataSource dataSource) {
         return new JdbcTemplate(dataSource);
     }
+
+//    @Profile("dev")
+//    @Bean
+//    public DataSource embeddedDataSource() {
+//        return new EmbeddedDatabaseBuilder()
+//                .setType(EmbeddedDatabaseType.H2)
+//                .addScript(EMBEDDED_DATABASE_SCRIPT)
+//                .build();
+//    }
 }

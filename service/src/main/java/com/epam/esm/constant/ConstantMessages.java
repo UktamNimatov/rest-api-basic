@@ -5,6 +5,7 @@ public enum ConstantMessages {
     public static final Integer ERROR_CODE_404 = 40401;
     public static final Integer ERROR_CODE_400 = 40001;
     public static final Integer ERROR_CODE_409 = 40901;
+    public static final Integer ERROR_CODE_405 = 40501;
 
     public static final String RESOURCE_NOT_FOUND = " Requested resource not found";
 
@@ -22,5 +23,6 @@ public enum ConstantMessages {
     public static final String EXISTING_GIFT_CERTIFICATE_NAME = "Gift certificate already exists with this name";
     public static final String EXISTING_TAG_NAME = "Tag already exists with this name";
 
+    public static final String NO_MAPPING_FOUND = "No mapping found for this url";
 
 }
