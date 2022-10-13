@@ -145,13 +145,13 @@ public class GiftCertificateDaoImpl extends AbstractEntityDao<GiftCertificate> i
     public List<GiftCertificate> sortByRequirements(List<GiftCertificate> giftCertificatesList, @Nullable Map<String, String> requirements) {
         if (requirements != null) {
             for (Map.Entry<String, String> entry : requirements.entrySet()) {
-                if (entry.getKey().equalsIgnoreCase("name")) {
+                if (entry.getKey().equalsIgnoreCase("sortByName")) {
                     sortByName(giftCertificatesList, entry.getValue());
                 }
-                if (entry.getKey().equalsIgnoreCase("createDate")) {
+                if (entry.getKey().equalsIgnoreCase("sortByCreateDate")) {
                     sortByCreateDate(giftCertificatesList, entry.getValue());
                 }
-                if (entry.getKey().equalsIgnoreCase("lastUpdateDate")) {
+                if (entry.getKey().equalsIgnoreCase("sortByLastUpdateDate")) {
                     sortByLastUpdateDate(giftCertificatesList, entry.getValue());
                 }
             }
@@ -162,9 +162,9 @@ public class GiftCertificateDaoImpl extends AbstractEntityDao<GiftCertificate> i
     private void sortByName(List<GiftCertificate> giftCertificatesList, String direction) {
         if (!direction.equalsIgnoreCase("desc")) {
             giftCertificatesList.sort(Comparator.comparing(GiftCertificate::getName));
+            Collections.reverse(giftCertificatesList);
         }else {
             giftCertificatesList.sort(Comparator.comparing(GiftCertificate::getName));
-            Collections.reverse(giftCertificatesList);
         }
     }
 
