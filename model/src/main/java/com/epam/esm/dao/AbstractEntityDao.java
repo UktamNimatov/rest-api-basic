@@ -82,7 +82,7 @@ public abstract class AbstractEntityDao<T extends Entity> implements EntityDao<T
     @Override
     public Optional<T> findByName(String name) {
         try {
-            logger.info("abstract entity dao: tagName " + name);
+            logger.info("abstract entity dao: find by name: " + name);
              return jdbcTemplate.queryForObject(SELECT_FROM + getTableName() + WHERE_NAME, entityMapper, name);
         } catch (DataAccessException e) {
             logger.error("error in getting one object from database");

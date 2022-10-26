@@ -1,5 +1,6 @@
 package com.epam.esm.config;
 
+import com.sun.org.apache.bcel.internal.generic.POP;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import org.apache.logging.log4j.LogManager;
@@ -21,26 +22,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
+@Profile("prod")
 @Configuration
 public class DatabaseConfiguration {
     private static final Logger logger = LogManager.getLogger();
 
-    private static final String EMBEDDED_DATABASE_SCRIPT = "script/embedded.sql";
+    private static final String INIT_SQL = "script/embedded.sql";
+    private static final String POPULATE_SQL = "script/populate.sql";
 
-    @Value("${spring.datasource.driver-class-name}")
-    private String driverClassName;
-
-    @Value("${spring.datasource.username}")
-    private String username;
-
-    @Value("${spring.datasource.password}")
-    private String password;
-
-    @Value("${spring.datasource.url}")
-    private String dataSourceUrl;
-
-    @Value("${spring.datasource.maxPoolSize}")
-    private String maxPoolSize;
 
     private static final String FILE_PATH = "/config/database.properties";
     private static final String DATABASE_DRIVER_CLASS = "spring.datasource.driver-class-name";
@@ -49,6 +38,7 @@ public class DatabaseConfiguration {
     private static final String DATABASE_PASSWORD = "spring.datasource.password";
     private static final String DATABASE_MAX_POOL_SIZE = "spring.datasource.maxPoolSize";
 
+//    @Profile("prod")
     @Bean
     public HikariConfig getHikariConfig() {
         Properties properties = new Properties();
@@ -70,16 +60,6 @@ public class DatabaseConfiguration {
         return hikariConfig;
     }
 
-//    @Bean
-//    public HikariConfig getHikariConfig() {
-//        HikariConfig hikariConfig = new HikariConfig();
-//        hikariConfig.setDriverClassName(driverClassName);
-//        hikariConfig.setJdbcUrl(dataSourceUrl);
-//        hikariConfig.setUsername(username);
-//        hikariConfig.setPassword(password);
-//        hikariConfig.setMaximumPoolSize(Integer.parseInt(maxPoolSize));
-//        return hikariConfig;
-//    }
 
 
 //    @Profile("prod")
@@ -93,6 +73,7 @@ public class DatabaseConfiguration {
         return new HikariDataSource(hikariConfig);
     }
 
+//    @Profile("prod")
     @Bean
     public JdbcTemplate jdbcTemplate(DataSource dataSource) {
         return new JdbcTemplate(dataSource);
@@ -103,7 +84,8 @@ public class DatabaseConfiguration {
 //    public DataSource embeddedDataSource() {
 //        return new EmbeddedDatabaseBuilder()
 //                .setType(EmbeddedDatabaseType.H2)
-//                .addScript(EMBEDDED_DATABASE_SCRIPT)
+//                .addScript(INIT_SQL)
+//                .addScript(POPULATE_SQL)
 //                .build();
 //    }
 }

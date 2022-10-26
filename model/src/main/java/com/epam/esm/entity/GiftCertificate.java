@@ -33,6 +33,18 @@ public class GiftCertificate extends Entity{
         this.tagList = tagList;
     }
 
+    public GiftCertificate(long id, String name, String description, double price,
+                           int duration, String createDate, String lastUpdateDate, List<Tag> tagList) {
+        super(id);
+        this.name = name;
+        this.description = description;
+        this.price = price;
+        this.duration = duration;
+        this.createDate = createDate;
+        this.lastUpdateDate = lastUpdateDate;
+        this.tagList = tagList;
+    }
+
     public String getName() {
         return name;
     }

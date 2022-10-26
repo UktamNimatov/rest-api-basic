@@ -2,6 +2,8 @@ package com.epam.esm.validator.impl;
 
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.validator.GiftCertificateValidator;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -16,7 +18,9 @@ import static java.time.ZonedDateTime.now;
 
 @Component
 public class GiftCertificateValidatorImpl implements GiftCertificateValidator {
-    private static final String NAME_REGEX = "[\\p{Alpha}\\p{Digit}]{3,50}";
+    private static final Logger logger = LogManager.getLogger();
+
+    private static final String NAME_REGEX = "[\\p{Alpha}\\s*+\\p{Digit}]{3,50}";
     private static final String PRICE_REGEX = "^\\d{0,8}(\\.\\d{1,4})?$";
     private static final String DESCRIPTION_REGEX = "^.{3,}$";
 
@@ -24,6 +28,8 @@ public class GiftCertificateValidatorImpl implements GiftCertificateValidator {
 
     @Override
     public boolean checkName(String name) {
+        logger.info("is name null: " + (name == null));
+        logger.info("name regex: " + (Pattern.matches(NAME_REGEX, name)));
         return name != null && Pattern.matches(NAME_REGEX, name);
     }
 

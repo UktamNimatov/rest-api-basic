@@ -1,24 +1,18 @@
 package com.epam.esm.dao.mapper;
 
-import com.epam.esm.dao.GiftCertificateDao;
 import com.epam.esm.dao.TagDao;
-import com.epam.esm.entity.Entity;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
 import com.epam.esm.exception.DaoException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.RowMapperResultSetExtractor;
 import org.springframework.stereotype.Component;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -54,7 +48,7 @@ public class GiftCertificateMapper implements EntityMapper<GiftCertificate> {
 
             return Optional.of(giftCertificate);
         }catch (SQLException | DaoException sqlException) {
-            logger.error("error in row mapping tag", sqlException);
+            logger.error("error in row mapping gift_certificate", sqlException);
         }
         return Optional.empty();
     }

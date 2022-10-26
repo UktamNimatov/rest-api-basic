@@ -11,6 +11,7 @@ import com.epam.esm.service.AbstractEntityService;
 import com.epam.esm.service.GiftCertificateService;
 import com.epam.esm.validator.GiftCertificateValidator;
 import com.epam.esm.validator.TagValidator;
+import com.epam.esm.validator.impl.GiftCertificateValidatorImpl;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,14 +27,14 @@ public class GiftCertificateServiceImpl extends AbstractEntityService<GiftCertif
     private static final Logger logger = LogManager.getLogger();
 
     private final GiftCertificateDao<GiftCertificate> giftCertificateDao;
-    private final GiftCertificateValidator giftCertificateValidator;
+    private final GiftCertificateValidator giftCertificateValidator = new GiftCertificateValidatorImpl();
     private final TagDao<Tag> tagDao;
 
     @Autowired
-    public GiftCertificateServiceImpl(AbstractEntityDao<GiftCertificate> abstractEntityDao, GiftCertificateDao<GiftCertificate> giftCertificateDao, GiftCertificateValidator giftCertificateValidator, TagDao<Tag> tagDao) {
+    public GiftCertificateServiceImpl(AbstractEntityDao<GiftCertificate> abstractEntityDao,
+                                      GiftCertificateDao<GiftCertificate> giftCertificateDao, TagDao<Tag> tagDao) {
         super(abstractEntityDao);
         this.giftCertificateDao = giftCertificateDao;
-        this.giftCertificateValidator = giftCertificateValidator;
         this.tagDao = tagDao;
     }
 
@@ -73,10 +74,12 @@ public class GiftCertificateServiceImpl extends AbstractEntityService<GiftCertif
     @Transactional
     public boolean update(GiftCertificate giftCertificate) throws ServiceException, InvalidFieldException {
         try {
-            if (!giftCertificateValidator.checkName(giftCertificate.getName()) ||
-                    !giftCertificateValidator.checkGiftCertificate(giftCertificate))
+            logger.info("gift check result: " + giftCertificateValidator.checkGiftCertificate(giftCertificate));
+            if (/*!giftCertificateValidator.checkName(giftCertificate.getName()) ||*/
+                    !giftCertificateValidator.checkGiftCertificate(giftCertificate)) {
+                logger.info(ConstantMessages.INVALID_GIFT_CERTIFICATE + giftCertificate.toString());
                 throw new InvalidFieldException(ConstantMessages.INVALID_GIFT_CERTIFICATE, giftCertificate.toString());
-                return giftCertificateDao.update(giftCertificate);
+            } else return giftCertificateDao.update(giftCertificate);
 
         } catch (DaoException daoException) {
             throw new ServiceException(daoException);

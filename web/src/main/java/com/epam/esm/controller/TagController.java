@@ -15,6 +15,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.awt.*;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,8 +31,10 @@ public class TagController {
     }
 
     @GetMapping
-    public List<Tag> findAllTags() throws ServiceException {
-        return tagService.findAll();
+    public List<Tag> findAllTags(@RequestParam(required = false) String name) throws ServiceException, ResourceNotFoundException {
+        if (name != null) {
+            return Collections.singletonList(tagService.findByName(name).get());
+        }else return tagService.findAll();
     }
 
     @GetMapping("/{id}")

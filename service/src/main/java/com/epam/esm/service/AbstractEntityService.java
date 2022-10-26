@@ -54,7 +54,7 @@ public abstract class AbstractEntityService<T extends Entity> implements EntityS
 
     @Override
     public Optional<T> findByName(String name) throws ResourceNotFoundException {
-        logger.info("abstract entity service: tagName " + name);
+        logger.info("abstract entity service: name: " + name);
         if (!abstractEntityDao.findByName(name).isPresent()) {
             throw new ResourceNotFoundException(String.valueOf(ConstantMessages.ERROR_CODE_404),
                     ConstantMessages.RESOURCE_NOT_FOUND);

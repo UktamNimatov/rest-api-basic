@@ -10,7 +10,7 @@ public class WebInitializer extends AbstractAnnotationConfigDispatcherServletIni
 
     @Override
     protected Class<?>[] getRootConfigClasses() {
-        return new Class[] {DatabaseConfiguration.class};
+        return new Class[] {DatabaseConfiguration.class, TestDatabaseConfig.class};
     }
 
     @Override
@@ -34,7 +34,7 @@ public class WebInitializer extends AbstractAnnotationConfigDispatcherServletIni
     protected WebApplicationContext createRootApplicationContext() {
         WebApplicationContext context = super.createRootApplicationContext();
         if (context != null) {
-            ((ConfigurableEnvironment)context.getEnvironment()).setActiveProfiles("dev");
+            ((ConfigurableEnvironment)context.getEnvironment()).setActiveProfiles("dev", "prod");
         }
         return context;
     }

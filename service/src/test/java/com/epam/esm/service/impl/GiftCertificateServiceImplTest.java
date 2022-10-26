@@ -9,6 +9,8 @@ import com.epam.esm.entity.Tag;
 import com.epam.esm.exception.*;
 import com.epam.esm.service.GiftCertificateService;
 import com.epam.esm.validator.impl.GiftCertificateValidatorImpl;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -30,11 +32,11 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class GiftCertificateServiceImplTest {
+    private static final Logger logger = LogManager.getLogger();
 
     @Mock
     private GiftCertificateDaoImpl giftCertificateDao = Mockito.mock(GiftCertificateDaoImpl.class);
-    @Mock
-    private TagDaoImpl tagDao = Mockito.mock(TagDaoImpl.class);
+
     @Mock
     private AbstractEntityDao<GiftCertificate> abstractEntityDao = Mockito.mock(AbstractEntityDao.class);
     @Mock
@@ -42,8 +44,6 @@ public class GiftCertificateServiceImplTest {
 
     @InjectMocks
     private GiftCertificateServiceImpl giftCertificateService;
-    @InjectMocks
-    private TagServiceImpl tagService;
 
 
     private static final Tag NEW_TAG = new Tag("tagName3");
@@ -61,23 +61,26 @@ public class GiftCertificateServiceImplTest {
             "this is amazing", 34.20, 240, "2020-04-11T02:30:12.122",
             "2022-08-30T12:12:12.112", Collections.singletonList(new Tag( "tagName7")));
 
+    private GiftCertificate GIFT_CERTIFICATE_4 = new GiftCertificate(44, "Google",
+            "this is hop", 56.21, 222, "2021-10-10T02:23:11.122",
+            "2022-03-05T04:33:25.236", Collections.singletonList(new Tag( "tagName7")));
+
     @Test
     @DisplayName(value = "Testing find by name method")
     public void testFindByName() throws ResourceNotFoundException {
-        when(giftCertificateDao.findByName("giftCertificate2")).thenReturn(Optional.of(GIFT_CERTIFICATE_2));
+        Mockito.when(abstractEntityDao.findByName("giftCertificate2")).thenReturn(Optional.of(GIFT_CERTIFICATE_2));
         Optional<GiftCertificate> actual = giftCertificateService.findByName("giftCertificate2");
         Optional<GiftCertificate> expected = Optional.of(GIFT_CERTIFICATE_2);
-        Assertions.assertEquals(actual.get(), expected.get());
+        Assertions.assertEquals(expected.get(), actual.get());
     }
 
     @Test
     @DisplayName(value = "Testing find all method")
     public void testFindAll() throws DaoException, ServiceException {
         List<GiftCertificate> giftCertificateList = Arrays.asList(GIFT_CERTIFICATE_1, GIFT_CERTIFICATE_2, GIFT_CERTIFICATE_3);
-        when(giftCertificateDao.findAll()).thenReturn(giftCertificateList);
+        Mockito.when(giftCertificateDao.findAll()).thenReturn(giftCertificateList);
         List<GiftCertificate> actual = giftCertificateService.findAll();
-        List<GiftCertificate> expected = giftCertificateList;
-        Assertions.assertEquals(actual, expected);
+        Assertions.assertEquals(giftCertificateList, actual);
     }
 
     @Test
@@ -89,4 +92,14 @@ public class GiftCertificateServiceImplTest {
         Assertions.assertEquals(actual, giftCertificateList);
     }
 
+    @Test
+    @DisplayName(value = "Testing update method")
+    public void testUpdateMethod() throws DaoException, ServiceException, InvalidFieldException {
+        logger.info("<><><><> "+GIFT_CERTIFICATE_4.toString());
+        GIFT_CERTIFICATE_4.setDuration(4);
+        logger.info("<><><><> "+GIFT_CERTIFICATE_4.toString());
+        Mockito.when(giftCertificateDao.update(GIFT_CERTIFICATE_4)).thenReturn(true);
+        boolean actual = giftCertificateService.update(GIFT_CERTIFICATE_4);
+        Assertions.assertTrue(actual);
+    }
 }

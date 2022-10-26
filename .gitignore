@@ -17,3 +17,4 @@ out
 model/out/**
 
 service/logs/**
+model/logs/**
