@@ -59,7 +59,7 @@ public class TagServiceImplTest {
 
     @Test
     @DisplayName(value = "Testing find all method")
-    public void testGetAll() throws DaoException, ServiceException {
+    public void testFindAll() throws DaoException, ServiceException {
         List<Tag> tags = Arrays.asList(TAG_1, TAG_2, TAG_3, TAG_4, TAG_5);
         Mockito.when(abstractEntityDao.findAll()).thenReturn(tags);
         List<Tag> actual = tagService.findAll();
@@ -78,8 +78,8 @@ public class TagServiceImplTest {
 
     @Test
     @DisplayName(value = "Testing insert method")
-    public void testInsert() throws ServiceException, InvalidFieldException, DuplicateResourceException {
-        Mockito.when(tagService.insert(TAG_5)).thenReturn(true);
+    public void testInsert() throws ServiceException, InvalidFieldException, DuplicateResourceException, DaoException {
+        Mockito.when(tagDao.insert(TAG_5)).thenReturn(true);
         boolean actualResult = tagService.insert(TAG_5);
         Assertions.assertTrue(actualResult);
     }

@@ -1,5 +1,6 @@
 package com.epam.esm.handler;
 
+import com.epam.esm.config.localization.Translator;
 import com.epam.esm.exception.DaoException;
 import com.epam.esm.exception.ExceptionResponse;
 import com.epam.esm.constant.ConstantMessages;

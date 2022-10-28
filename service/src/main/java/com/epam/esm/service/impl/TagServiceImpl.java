@@ -5,11 +5,9 @@ import com.epam.esm.dao.AbstractEntityDao;
 import com.epam.esm.dao.TagDao;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
-import com.epam.esm.exception.DaoException;
-import com.epam.esm.exception.DuplicateResourceException;
-import com.epam.esm.exception.InvalidFieldException;
-import com.epam.esm.exception.ServiceException;
+import com.epam.esm.exception.*;
 import com.epam.esm.service.AbstractEntityService;
+import com.epam.esm.service.GiftCertificateService;
 import com.epam.esm.service.TagService;
 import com.epam.esm.validator.TagValidator;
 import com.epam.esm.validator.impl.TagValidatorImpl;
@@ -27,11 +25,14 @@ public class TagServiceImpl extends AbstractEntityService<Tag> implements TagSer
 
     private final TagDao<Tag> tagDao;
     private final TagValidator tagValidator = new TagValidatorImpl();
+    private final GiftCertificateService<GiftCertificate> giftCertificateService;
 
     @Autowired
-    public TagServiceImpl(AbstractEntityDao<Tag> abstractEntityDao, TagDao<Tag> tagDao) {
+    public TagServiceImpl(AbstractEntityDao<Tag> abstractEntityDao, TagDao<Tag> tagDao,
+                          GiftCertificateService<GiftCertificate> giftCertificateService) {
         super(abstractEntityDao);
         this.tagDao = tagDao;
+        this.giftCertificateService = giftCertificateService;
     }
 
     @Override
@@ -54,8 +55,12 @@ public class TagServiceImpl extends AbstractEntityService<Tag> implements TagSer
     @Override
     public List<Tag> findTagsOfCertificate(long certificateId) throws ServiceException{
         try {
+            if (!giftCertificateService.findById(certificateId).isPresent()) {
+                throw new ResourceNotFoundException(String.valueOf(ConstantMessages.ERROR_CODE_404),
+                        ConstantMessages.RESOURCE_NOT_FOUND);
+            }
             return tagDao.findTagsOfCertificate(certificateId);
-        } catch (DaoException daoException) {
+        } catch (DaoException | ResourceNotFoundException daoException) {
             throw new ServiceException(daoException);
         }
     }

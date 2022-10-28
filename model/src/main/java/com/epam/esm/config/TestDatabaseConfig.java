@@ -83,7 +83,8 @@ public class TestDatabaseConfig {
         return databaseBuilder.setType(EmbeddedDatabaseType.H2)
                 .ignoreFailedDrops(true)
                 .setScriptEncoding("UTF-8")
-                .addScripts(INIT_DATA, POPULATE_SQL)
+                .addScript(INIT_DATA)
+                .addScript(POPULATE_SQL)
                 .build();
     }
 }

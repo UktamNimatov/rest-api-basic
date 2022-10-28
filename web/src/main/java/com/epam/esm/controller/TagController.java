@@ -7,6 +7,7 @@ import com.epam.esm.exception.DuplicateResourceException;
 import com.epam.esm.exception.InvalidFieldException;
 import com.epam.esm.exception.ResourceNotFoundException;
 import com.epam.esm.exception.ServiceException;
+import com.epam.esm.service.GiftCertificateService;
 import com.epam.esm.service.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,17 +25,28 @@ import java.util.Optional;
 @RequestMapping("/tags")
 public class TagController {
     private final TagService<Tag> tagService;
+    private final GiftCertificateService<GiftCertificate> giftCertificateService;
 
     @Autowired
-    public TagController(TagService<Tag> tagService) {
+    public TagController(TagService<Tag> tagService, GiftCertificateService<GiftCertificate> giftCertificateService) {
         this.tagService = tagService;
+        this.giftCertificateService = giftCertificateService;
     }
 
     @GetMapping
-    public List<Tag> findAllTags(@RequestParam(required = false) String name) throws ServiceException, ResourceNotFoundException {
+    public List<Tag> findAllTags(@RequestParam(required = false) String name,
+                                 @RequestParam(required = false) String giftCertificateName,
+                                 @RequestParam(required = false) Long giftCertificateId) throws ServiceException, ResourceNotFoundException {
         if (name != null) {
             return Collections.singletonList(tagService.findByName(name).get());
-        }else return tagService.findAll();
+        }
+        if (giftCertificateName != null) {
+            return tagService.findTagsOfCertificate(giftCertificateService.findByName(giftCertificateName).get().getId());
+        }
+        if (giftCertificateId != null) {
+            return tagService.findTagsOfCertificate(giftCertificateId);
+        }
+        else return tagService.findAll();
     }
 
     @GetMapping("/{id}")

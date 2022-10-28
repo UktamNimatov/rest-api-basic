@@ -1,5 +1,6 @@
 package com.epam.esm.config;
 
+import com.epam.esm.config.localization.LanguageConfig;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.DispatcherServlet;
@@ -15,7 +16,7 @@ public class WebInitializer extends AbstractAnnotationConfigDispatcherServletIni
 
     @Override
     protected Class<?>[] getServletConfigClasses() {
-        return new Class[]{WebConfig.class};
+        return new Class[]{WebConfig.class, LanguageConfig.class};
     }
 
     @Override
@@ -34,7 +35,7 @@ public class WebInitializer extends AbstractAnnotationConfigDispatcherServletIni
     protected WebApplicationContext createRootApplicationContext() {
         WebApplicationContext context = super.createRootApplicationContext();
         if (context != null) {
-            ((ConfigurableEnvironment)context.getEnvironment()).setActiveProfiles("dev", "prod");
+            ((ConfigurableEnvironment)context.getEnvironment()).setActiveProfiles("dev"/*, "prod"*/);
         }
         return context;
     }

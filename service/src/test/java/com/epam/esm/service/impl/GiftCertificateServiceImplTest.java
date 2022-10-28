@@ -8,6 +8,7 @@ import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
 import com.epam.esm.exception.*;
 import com.epam.esm.service.GiftCertificateService;
+import com.epam.esm.validator.GiftCertificateValidator;
 import com.epam.esm.validator.impl.GiftCertificateValidatorImpl;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -35,12 +36,12 @@ public class GiftCertificateServiceImplTest {
     private static final Logger logger = LogManager.getLogger();
 
     @Mock
-    private GiftCertificateDaoImpl giftCertificateDao = Mockito.mock(GiftCertificateDaoImpl.class);
+    private GiftCertificateDao<GiftCertificate> giftCertificateDao = Mockito.mock(GiftCertificateDaoImpl.class);
 
     @Mock
     private AbstractEntityDao<GiftCertificate> abstractEntityDao = Mockito.mock(AbstractEntityDao.class);
     @Mock
-    private GiftCertificateValidatorImpl validator = Mockito.mock(GiftCertificateValidatorImpl.class);
+    private GiftCertificateValidator validator = Mockito.mock(GiftCertificateValidatorImpl.class);
 
     @InjectMocks
     private GiftCertificateServiceImpl giftCertificateService;
@@ -78,7 +79,7 @@ public class GiftCertificateServiceImplTest {
     @DisplayName(value = "Testing find all method")
     public void testFindAll() throws DaoException, ServiceException {
         List<GiftCertificate> giftCertificateList = Arrays.asList(GIFT_CERTIFICATE_1, GIFT_CERTIFICATE_2, GIFT_CERTIFICATE_3);
-        Mockito.when(giftCertificateDao.findAll()).thenReturn(giftCertificateList);
+        Mockito.when(abstractEntityDao.findAll()).thenReturn(giftCertificateList);
         List<GiftCertificate> actual = giftCertificateService.findAll();
         Assertions.assertEquals(giftCertificateList, actual);
     }

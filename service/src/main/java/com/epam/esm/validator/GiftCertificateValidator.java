@@ -1,7 +1,6 @@
 package com.epam.esm.validator;
 
 import com.epam.esm.entity.GiftCertificate;
-import com.sun.scenario.effect.impl.state.AccessHelper;
 
 public interface GiftCertificateValidator {
 

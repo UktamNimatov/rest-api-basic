@@ -75,10 +75,10 @@ public class GiftCertificateServiceImpl extends AbstractEntityService<GiftCertif
     public boolean update(GiftCertificate giftCertificate) throws ServiceException, InvalidFieldException {
         try {
             logger.info("gift check result: " + giftCertificateValidator.checkGiftCertificate(giftCertificate));
-            if (/*!giftCertificateValidator.checkName(giftCertificate.getName()) ||*/
-                    !giftCertificateValidator.checkGiftCertificate(giftCertificate)) {
+            if (!giftCertificateValidator.checkGiftCertificate(giftCertificate)) {
                 logger.info(ConstantMessages.INVALID_GIFT_CERTIFICATE + giftCertificate.toString());
-                throw new InvalidFieldException(ConstantMessages.INVALID_GIFT_CERTIFICATE, giftCertificate.toString());
+                throw new InvalidFieldException(String.valueOf(ConstantMessages.ERROR_CODE_400),
+                        ConstantMessages.INVALID_GIFT_CERTIFICATE + giftCertificate.toString());
             } else return giftCertificateDao.update(giftCertificate);
 
         } catch (DaoException daoException) {
