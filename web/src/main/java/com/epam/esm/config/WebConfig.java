@@ -12,11 +12,4 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @ComponentScan(basePackages = "com.epam.esm")
 public class WebConfig {
 
-//    @Bean
-//    public DispatcherServlet dispatcherServlet() {
-//        DispatcherServlet ds = new DispatcherServlet();
-//        ds.setThrowExceptionIfNoHandlerFound(true);
-//        return ds;
-//    }
-
 }

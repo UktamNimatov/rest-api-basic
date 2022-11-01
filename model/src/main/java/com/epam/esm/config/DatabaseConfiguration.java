@@ -19,10 +19,6 @@ import java.util.Properties;
 public class DatabaseConfiguration {
     private static final Logger logger = LogManager.getLogger();
 
-    private static final String INIT_SQL = "script/embedded.sql";
-    private static final String POPULATE_SQL = "script/populate.sql";
-
-
     private static final String FILE_PATH = "/config/database.properties";
     private static final String DATABASE_DRIVER_CLASS = "spring.datasource.driver-class-name";
     private static final String DATABASE_URL = "spring.datasource.url";
@@ -30,7 +26,6 @@ public class DatabaseConfiguration {
     private static final String DATABASE_PASSWORD = "spring.datasource.password";
     private static final String DATABASE_MAX_POOL_SIZE = "spring.datasource.maxPoolSize";
 
-//    @Profile("prod")
     @Bean
     public HikariConfig getHikariConfig() {
         Properties properties = new Properties();
@@ -54,7 +49,6 @@ public class DatabaseConfiguration {
 
 
 
-//    @Profile("prod")
     @Bean
     public DataSource dataSource(HikariConfig hikariConfig) {
         logger.info(">?>?>?>?>?>?");
@@ -65,19 +59,9 @@ public class DatabaseConfiguration {
         return new HikariDataSource(hikariConfig);
     }
 
-//    @Profile("prod")
     @Bean
     public JdbcTemplate jdbcTemplate(DataSource dataSource) {
         return new JdbcTemplate(dataSource);
     }
 
-//    @Profile("dev")
-//    @Bean
-//    public DataSource embeddedDataSource() {
-//        return new EmbeddedDatabaseBuilder()
-//                .setType(EmbeddedDatabaseType.H2)
-//                .addScript(INIT_SQL)
-//                .addScript(POPULATE_SQL)
-//                .build();
-//    }
 }
