@@ -8,9 +8,11 @@ import com.epam.esm.exception.ServiceException;
 import com.epam.esm.constant.ConstantMessages;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.lang.Nullable;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public abstract class AbstractEntityService<T extends Entity> implements EntityService<T> {
@@ -32,9 +34,9 @@ public abstract class AbstractEntityService<T extends Entity> implements EntityS
     }
 
     @Override
-    public List<T> findAll() throws ServiceException {
+    public List<T> findAll(@Nullable Map<String, String> sortingParameters) throws ServiceException {
         try {
-            return abstractEntityDao.findAll();
+            return abstractEntityDao.findAll(sortingParameters);
         } catch (DaoException daoException) {
             throw new ServiceException(daoException);
         }

@@ -12,6 +12,10 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.chrono.ChronoZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 import static java.time.ZonedDateTime.now;
@@ -19,6 +23,8 @@ import static java.time.ZonedDateTime.now;
 @Component
 public class GiftCertificateValidatorImpl implements GiftCertificateValidator {
     private static final Logger logger = LogManager.getLogger();
+
+    public static List<String> ERROR_LIST;
 
     private static final String NAME_REGEX = "[\\p{Alpha}\\s*+\\p{Digit}]{3,50}";
     private static final String PRICE_REGEX = "^\\d{0,8}(\\.\\d{1,4})?$";
@@ -29,13 +35,12 @@ public class GiftCertificateValidatorImpl implements GiftCertificateValidator {
     @Override
     public boolean checkName(String name) {
         logger.info("is name null: " + (name == null));
-        logger.info("name regex: " + (Pattern.matches(NAME_REGEX, name)));
         return name != null && Pattern.matches(NAME_REGEX, name);
     }
 
     @Override
     public boolean checkDescription(String description) {
-        boolean min = Pattern.matches(DESCRIPTION_REGEX, description);
+        boolean min = (description != null) && Pattern.matches(DESCRIPTION_REGEX, description);
         if (description.contains("<script>") || description.contains("</script>")) {
             String newDescription;
             newDescription = description.replaceAll("<script>", "");
@@ -47,51 +52,60 @@ public class GiftCertificateValidatorImpl implements GiftCertificateValidator {
 
     @Override
     public boolean checkPrice(double price) {
-        return (price > 0.0 && Pattern.matches(PRICE_REGEX, String.valueOf(price)));
+        return (price >= 0.0 && Pattern.matches(PRICE_REGEX, String.valueOf(price)));
     }
 
     @Override
     public boolean checkDuration(int duration) {
-        return duration > 0 && duration < Integer.MAX_VALUE;
+        return duration >= 0 && duration < Integer.MAX_VALUE;
     }
 
     @Override
     public boolean checkCreateDate(String createDate) {
-        return ZonedDateTime.ofLocal(LocalDateTime.parse(createDate,
-                DateTimeFormatter.ISO_LOCAL_DATE_TIME), ZoneOffset.UTC, ZoneOffset.UTC).isBefore(now());
-//        return ZonedDateTime.parse(createDate, DateTimeFormatter.ISO_LOCAL_DATE_TIME).isBefore(now());
+        try {
+            return ZonedDateTime.ofLocal(LocalDateTime.parse(createDate,
+                    DateTimeFormatter.ISO_LOCAL_DATE_TIME), ZoneOffset.UTC, ZoneOffset.UTC).isBefore(now());
+        }catch (DateTimeParseException dateTimeParseException) {
+            return false;
+        }
     }
 
     @Override
     public boolean checkLastUpdateDate(String lastUpdateDate) {
-        return ZonedDateTime.ofLocal(LocalDateTime.parse(lastUpdateDate,
-                DateTimeFormatter.ISO_LOCAL_DATE_TIME), ZoneOffset.UTC, ZoneOffset.UTC).isBefore(now());
-//        return ZonedDateTime.parse(lastUpdateDate, DateTimeFormatter.ISO_LOCAL_DATE_TIME).isBefore(now());
+        try {
+            return ZonedDateTime.ofLocal(LocalDateTime.parse(lastUpdateDate,
+                    DateTimeFormatter.ISO_LOCAL_DATE_TIME), ZoneOffset.UTC, ZoneOffset.UTC).isBefore(now());
+        } catch (DateTimeParseException dateTimeParseException) {
+            return false;
+        }
     }
 
     @Override
     public boolean checkGiftCertificate(GiftCertificate giftCertificate) {
         boolean isValid = true;
+        ERROR_LIST = new ArrayList<>();
         if (!checkName(giftCertificate.getName())) {
-            giftCertificate.setName(giftCertificate.getName() + INCORRECT_VALUE_PARAMETER);
+            ERROR_LIST.add("name " + INCORRECT_VALUE_PARAMETER);
             isValid = false;
         }
         if (!checkDescription(giftCertificate.getDescription())) {
-            giftCertificate.setDescription(giftCertificate.getDescription() + INCORRECT_VALUE_PARAMETER);
+            ERROR_LIST.add("description " + INCORRECT_VALUE_PARAMETER);
             isValid = false;
         }
         if (!checkPrice(giftCertificate.getPrice())) {
+            ERROR_LIST.add("price " + INCORRECT_VALUE_PARAMETER);
             isValid = false;
         }
         if (!checkDuration(giftCertificate.getDuration())) {
+            ERROR_LIST.add("duration " + INCORRECT_VALUE_PARAMETER);
             isValid = false;
         }
         if (!checkCreateDate(giftCertificate.getCreateDate())) {
-            giftCertificate.setCreateDate(giftCertificate.getCreateDate() + INCORRECT_VALUE_PARAMETER);
+            ERROR_LIST.add("createDate " + INCORRECT_VALUE_PARAMETER);
             isValid = false;
         }
         if (!checkLastUpdateDate(giftCertificate.getLastUpdateDate())) {
-            giftCertificate.setLastUpdateDate(giftCertificate.getLastUpdateDate() + INCORRECT_VALUE_PARAMETER);
+            ERROR_LIST.add("lastUpdateDate " + INCORRECT_VALUE_PARAMETER);
             isValid = false;
         }
         return isValid;

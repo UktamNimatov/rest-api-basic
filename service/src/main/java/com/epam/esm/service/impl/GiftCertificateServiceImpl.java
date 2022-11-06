@@ -43,7 +43,7 @@ public class GiftCertificateServiceImpl extends AbstractEntityService<GiftCertif
     public boolean insert(GiftCertificate giftCertificate) throws InvalidFieldException, DuplicateResourceException, ServiceException {
         if (!giftCertificateValidator.checkGiftCertificate(giftCertificate))
             throw new InvalidFieldException(String.valueOf(ConstantMessages.ERROR_CODE_400),
-                    ConstantMessages.INVALID_GIFT_CERTIFICATE + giftCertificate.toString());
+                    ConstantMessages.INVALID_GIFT_CERTIFICATE + GiftCertificateValidatorImpl.ERROR_LIST.toString());
         if (doesAlreadyExist(giftCertificate.getName()))
             throw new DuplicateResourceException(String.valueOf(ConstantMessages.ERROR_CODE_409),
                     ConstantMessages.EXISTING_GIFT_CERTIFICATE_NAME);
@@ -57,14 +57,14 @@ public class GiftCertificateServiceImpl extends AbstractEntityService<GiftCertif
 
 
     @Override
-    public List<GiftCertificate> findGiftCertificatesOfTag(String tagName) throws ServiceException, ResourceNotFoundException {
+    public List<GiftCertificate> findGiftCertificatesOfTag(String tagName, @Nullable Map<String, String> sortingParameters) throws ServiceException, ResourceNotFoundException {
         try {
             logger.info("service layer: tagName is " + tagName);
             if (!tagDao.findByName(tagName).isPresent()) {
                 throw new ResourceNotFoundException(String.valueOf(ConstantMessages.ERROR_CODE_404),
                         ConstantMessages.INVALID_TAG_NAME);
             }
-            return giftCertificateDao.findGiftCertificatesOfTag(tagName);
+            return giftCertificateDao.findGiftCertificatesOfTag(tagName, sortingParameters);
         } catch (DaoException daoException) {
             throw new ServiceException(daoException);
         }
@@ -74,12 +74,9 @@ public class GiftCertificateServiceImpl extends AbstractEntityService<GiftCertif
     @Transactional
     public boolean update(GiftCertificate giftCertificate) throws ServiceException, InvalidFieldException {
         try {
+            checkFieldsForUpdate(giftCertificate);
             logger.info("gift check result: " + giftCertificateValidator.checkGiftCertificate(giftCertificate));
-            if (!giftCertificateValidator.checkGiftCertificate(giftCertificate)) {
-                logger.info(ConstantMessages.INVALID_GIFT_CERTIFICATE + giftCertificate.toString());
-                throw new InvalidFieldException(String.valueOf(ConstantMessages.ERROR_CODE_400),
-                        ConstantMessages.INVALID_GIFT_CERTIFICATE + giftCertificate.toString());
-            } else return giftCertificateDao.update(giftCertificate);
+            return giftCertificateDao.update(giftCertificate);
 
         } catch (DaoException daoException) {
             throw new ServiceException(daoException);
@@ -107,9 +104,9 @@ public class GiftCertificateServiceImpl extends AbstractEntityService<GiftCertif
     }
 
     @Override
-    public List<GiftCertificate> searchByNameOrDescription(String searchKey) throws ServiceException, ResourceNotFoundException {
+    public List<GiftCertificate> searchByNameOrDescription(String searchKey, @Nullable Map<String, String> sortingParameters) throws ServiceException, ResourceNotFoundException {
         try {
-            List<GiftCertificate> toReturn = giftCertificateDao.searchByNameOrDescription(searchKey);
+            List<GiftCertificate> toReturn = giftCertificateDao.searchByNameOrDescription(searchKey, sortingParameters);
             if (!toReturn.isEmpty()) {
                 return toReturn;
             }
@@ -132,5 +129,40 @@ public class GiftCertificateServiceImpl extends AbstractEntityService<GiftCertif
             logger.error(daoException);
         }
         return false;
+    }
+
+    private void checkFieldsForUpdate(GiftCertificate giftCertificate) throws InvalidFieldException {
+        if (giftCertificate.getName() != null) {
+            if (!giftCertificateValidator.checkName(giftCertificate.getName())) {
+                throw new InvalidFieldException(String.valueOf(ConstantMessages.ERROR_CODE_400),
+                        ConstantMessages.INVALID_GIFT_CERTIFICATE_NAME);
+            }
+        }
+        if (giftCertificate.getDescription() != null) {
+            if (!giftCertificateValidator.checkDescription(giftCertificate.getDescription())) {
+                throw new InvalidFieldException(String.valueOf(ConstantMessages.ERROR_CODE_400),
+                        ConstantMessages.INVALID_GIFT_CERTIFICATE_DESCRIPTION);
+            }
+        }
+        if (!giftCertificateValidator.checkDuration(giftCertificate.getDuration())) {
+            throw new InvalidFieldException(String.valueOf(ConstantMessages.ERROR_CODE_400),
+                    ConstantMessages.INVALID_GIFT_CERTIFICATE_DURATION);
+        }
+        if (!giftCertificateValidator.checkPrice(giftCertificate.getPrice())) {
+            throw new InvalidFieldException(String.valueOf(ConstantMessages.ERROR_CODE_400),
+                    ConstantMessages.INVALID_GIFT_CERTIFICATE_PRICE);
+        }
+        if (giftCertificate.getCreateDate() != null) {
+            if (!giftCertificateValidator.checkCreateDate(giftCertificate.getCreateDate())) {
+                throw new InvalidFieldException(String.valueOf(ConstantMessages.ERROR_CODE_400),
+                        ConstantMessages.INVALID_GIFT_CERTIFICATE_CREATE_DATE);
+            }
+        }
+        if (giftCertificate.getLastUpdateDate() != null) {
+            if (!giftCertificateValidator.checkLastUpdateDate(giftCertificate.getLastUpdateDate())) {
+                throw new InvalidFieldException(String.valueOf(ConstantMessages.ERROR_CODE_400),
+                        ConstantMessages.INVALID_GIFT_CERTIFICATE_UPDATE_DATE);
+            }
+        }
     }
 }

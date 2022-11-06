@@ -4,8 +4,10 @@ import com.epam.esm.entity.Entity;
 import com.epam.esm.exception.DaoException;
 import com.epam.esm.exception.ResourceNotFoundException;
 import com.epam.esm.exception.ServiceException;
+import org.springframework.lang.Nullable;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public interface EntityService<T extends Entity> {
@@ -14,7 +16,7 @@ public interface EntityService<T extends Entity> {
 
     Optional<T> findById(long id) throws ServiceException, ResourceNotFoundException;
 
-    List<T> findAll() throws ServiceException;
+    List<T> findAll(@Nullable Map<String, String> sortingParameters) throws ServiceException;
 
     boolean deleteById(long id) throws ServiceException, ResourceNotFoundException;
 

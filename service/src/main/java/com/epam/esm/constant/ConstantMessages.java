@@ -36,4 +36,11 @@ public enum ConstantMessages {
 
     public static final String FAILED_TO_CONVERT = "failed.to.convert";
     public static final String FAILED_TO_CONVERT_MESSAGE = "Failed to convert value";
+
+    public static final String INVALID_GIFT_CERTIFICATE_NAME = "invalid.name.gift.certificate";
+    public static final String INVALID_GIFT_CERTIFICATE_PRICE = "invalid.price.gift.certificate";
+    public static final String INVALID_GIFT_CERTIFICATE_DURATION = "invalid.duration.gift.certificate";
+    public static final String INVALID_GIFT_CERTIFICATE_DESCRIPTION = "invalid.description.gift.certificate";
+    public static final String INVALID_GIFT_CERTIFICATE_CREATE_DATE = "invalid.create.date.gift.certificate";
+    public static final String INVALID_GIFT_CERTIFICATE_UPDATE_DATE = "invalid.update.date.gift.certificate";
 }

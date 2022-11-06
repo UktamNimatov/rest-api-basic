@@ -13,7 +13,7 @@ public interface GiftCertificateService<T> extends EntityService<GiftCertificate
 
     boolean insert(GiftCertificate giftCertificate) throws InvalidFieldException, DuplicateResourceException, ServiceException;
 
-    List<T> findGiftCertificatesOfTag(String tagName) throws ServiceException, ResourceNotFoundException;
+    List<T> findGiftCertificatesOfTag(String tagName, @Nullable Map<String, String> sortingParameters) throws ServiceException, ResourceNotFoundException;
 
     boolean update(T giftCertificate) throws ServiceException, InvalidFieldException;
 
@@ -21,7 +21,7 @@ public interface GiftCertificateService<T> extends EntityService<GiftCertificate
 
     boolean disconnectTags(long giftCertificateId) throws ServiceException;
 
-    List<T> searchByNameOrDescription(String searchKey) throws ServiceException, ResourceNotFoundException;
+    List<T> searchByNameOrDescription(String searchKey, @Nullable Map<String, String> sortingParameters) throws ServiceException, ResourceNotFoundException;
 
     List<T> sortByRequirements(List<T> giftCertificatesList, Map<String, String> requirements);
 }
