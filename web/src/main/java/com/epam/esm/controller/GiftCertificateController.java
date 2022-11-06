@@ -22,6 +22,9 @@ import java.util.*;
 @RequestMapping("/gift-certificates")
 public class GiftCertificateController {
     private static final Logger logger = LogManager.getLogger();
+    private static final String SORT_BY_NAME = "sortByName";
+    private static final String SORT_BY_CREATE_DATE = "sortByCreateDate";
+    private static final String SORT_BY_LAST_UPDATE_DATE = "sortByLastUpdateDate";
 
     private final GiftCertificateService<GiftCertificate> giftCertificateService;
 
@@ -31,33 +34,24 @@ public class GiftCertificateController {
     }
 
     @GetMapping
-    public List<GiftCertificate> getAll(@RequestParam(required = false) String name,
-                                        @RequestParam(required = false) String searchKey,
-                                        @RequestParam(required = false) String tagName,
+    public List<GiftCertificate> getAll(@RequestParam(required = false) Map<String, String> searchValueMap,
                                         @RequestParam(required = false) String sortByName,
                                         @RequestParam(required = false) String sortByCreateDate,
                                         @RequestParam(required = false) String sortByLastUpdateDate) throws ServiceException, ResourceNotFoundException {
         Map<String, String> sortRequirements =
                 setSortRequirements(sortByName, sortByCreateDate, sortByLastUpdateDate);
 
-        if (name != null) {
-            logger.info("controller: name param is not null: " + name);
-            return Collections.singletonList(giftCertificateService.findByName(name).get());
+        if (searchValueMap != null && !searchValueMap.isEmpty()) {
+            Map.Entry<String, String> entry = searchValueMap.entrySet().iterator().next();
+            return giftCertificateService.searchByGivenParams(entry.getKey(), entry.getValue(), sortRequirements);
         }
-        if (searchKey != null) {
-            logger.info("controller: searchKey param is not null: " + searchKey);
-            return giftCertificateService.searchByNameOrDescription(searchKey, sortRequirements);
-        }
-        if (tagName != null) {
-            logger.info("controller: tagName param is not null: " + tagName);
-            return giftCertificateService.findGiftCertificatesOfTag(tagName, sortRequirements);
-        }
+
         return giftCertificateService.findAll(sortRequirements);
     }
 
     @GetMapping("/{id}")
     public GiftCertificate getOne(@PathVariable("id") long id) throws ServiceException, ResourceNotFoundException {
-        return giftCertificateService.findById(id).get();
+        return giftCertificateService.findById(id);
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -86,15 +80,15 @@ public class GiftCertificateController {
                                                     @Nullable String sortByLastUpdateDate) {
         Map<String, String> requirements = new HashMap<>();
         if (sortByName != null) {
-            requirements.put("sortByName", sortByName);
+            requirements.put(SORT_BY_NAME, sortByName);
         }
 
         if (sortByCreateDate != null) {
-            requirements.put("sortByCreateDate", sortByCreateDate);
+            requirements.put(SORT_BY_CREATE_DATE, sortByCreateDate);
         }
 
         if (sortByLastUpdateDate != null) {
-            requirements.put("sortByLastUpdateDate", sortByLastUpdateDate);
+            requirements.put(SORT_BY_LAST_UPDATE_DATE, sortByLastUpdateDate);
         }
         return requirements;
     }

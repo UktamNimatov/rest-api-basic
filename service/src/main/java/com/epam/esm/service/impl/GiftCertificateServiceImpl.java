@@ -4,6 +4,7 @@ import com.epam.esm.constant.ConstantMessages;
 import com.epam.esm.dao.AbstractEntityDao;
 import com.epam.esm.dao.GiftCertificateDao;
 import com.epam.esm.dao.TagDao;
+import com.epam.esm.dao.mapper.ColumnName;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
 import com.epam.esm.exception.*;
@@ -21,12 +22,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 @Service
 public class GiftCertificateServiceImpl extends AbstractEntityService<GiftCertificate> implements GiftCertificateService<GiftCertificate> {
     private static final Logger logger = LogManager.getLogger();
+    private static final String TAG_NAME = "tagName";
+    private static final String KEY_WORD = "keyWord";
 
     private final GiftCertificateDao<GiftCertificate> giftCertificateDao;
     private final GiftCertificateValidator giftCertificateValidator = new GiftCertificateValidatorImpl();
@@ -125,6 +129,20 @@ public class GiftCertificateServiceImpl extends AbstractEntityService<GiftCertif
         } catch (DaoException daoException) {
             throw new ServiceException(daoException);
         }
+    }
+
+    @Override
+    public List<GiftCertificate> searchByGivenParams(String searchKey, String searchValue, Map<String, String> sortingParameters) throws ServiceException, ResourceNotFoundException {
+        if (searchKey.equals(ColumnName.NAME)) {
+            return Collections.singletonList(findByName(searchValue));
+        }
+        if (searchKey.equals(TAG_NAME)) {
+            return findGiftCertificatesOfTag(searchValue, sortingParameters);
+        }
+        if (searchKey.equals(KEY_WORD)) {
+            return searchByNameOrDescription(searchValue, sortingParameters);
+        }
+        return findAll(sortingParameters);
     }
 
     private void checkFieldsForUpdate(GiftCertificate giftCertificate) throws InvalidFieldException {

@@ -25,12 +25,12 @@ public abstract class AbstractEntityService<T extends Entity> implements EntityS
     }
 
     @Override
-    public Optional<T> findById(long id) throws ResourceNotFoundException {
+    public T findById(long id) throws ResourceNotFoundException {
         if (!abstractEntityDao.findById(id).isPresent()) {
             throw new ResourceNotFoundException(String.valueOf(ConstantMessages.ERROR_CODE_404),
                     ConstantMessages.RESOURCE_NOT_FOUND);
         }
-        return abstractEntityDao.findById(id);
+        return abstractEntityDao.findById(id).get();
     }
 
     @Override
@@ -55,12 +55,12 @@ public abstract class AbstractEntityService<T extends Entity> implements EntityS
     }
 
     @Override
-    public Optional<T> findByName(String name) throws ResourceNotFoundException {
+    public T findByName(String name) throws ResourceNotFoundException {
         logger.info("abstract entity service: name: " + name);
         if (!abstractEntityDao.findByName(name).isPresent()) {
             throw new ResourceNotFoundException(String.valueOf(ConstantMessages.ERROR_CODE_404),
                     ConstantMessages.RESOURCE_NOT_FOUND);
         }
-            return abstractEntityDao.findByName(name);
+            return abstractEntityDao.findByName(name).get();
     }
 }

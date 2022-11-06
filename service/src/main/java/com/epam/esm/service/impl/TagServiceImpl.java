@@ -55,7 +55,7 @@ public class TagServiceImpl extends AbstractEntityService<Tag> implements TagSer
     @Override
     public List<Tag> findTagsOfCertificate(long certificateId) throws ServiceException{
         try {
-            if (!giftCertificateService.findById(certificateId).isPresent()) {
+            if (giftCertificateService.findById(certificateId) == null) {
                 throw new ResourceNotFoundException(String.valueOf(ConstantMessages.ERROR_CODE_404),
                         ConstantMessages.RESOURCE_NOT_FOUND);
             }

@@ -36,10 +36,10 @@ public class TagController {
                                  @RequestParam(required = false) String giftCertificateName,
                                  @RequestParam(required = false) Long giftCertificateId) throws ServiceException, ResourceNotFoundException {
         if (name != null) {
-            return Collections.singletonList(tagService.findByName(name).get());
+            return Collections.singletonList(tagService.findByName(name));
         }
         if (giftCertificateName != null) {
-            return tagService.findTagsOfCertificate(giftCertificateService.findByName(giftCertificateName).get().getId());
+            return tagService.findTagsOfCertificate(giftCertificateService.findByName(giftCertificateName).getId());
         }
         if (giftCertificateId != null) {
             return tagService.findTagsOfCertificate(giftCertificateId);
@@ -49,12 +49,12 @@ public class TagController {
 
     @GetMapping("/{id}")
     public Tag getOne(@PathVariable long id) throws ServiceException, ResourceNotFoundException {
-        return tagService.findById(id).get();
+        return tagService.findById(id);
     }
 
     @GetMapping("/name/{name}")
     public Tag findByName(@PathVariable String name) throws ServiceException, ResourceNotFoundException {
-        return tagService.findByName(name).get();
+        return tagService.findByName(name);
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)

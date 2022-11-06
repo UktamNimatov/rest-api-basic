@@ -12,14 +12,12 @@ import java.util.Optional;
 
 public interface EntityService<T extends Entity> {
 
-//    boolean insert(T entity) throws ServiceException;
-
-    Optional<T> findById(long id) throws ServiceException, ResourceNotFoundException;
+    T findById(long id) throws ServiceException, ResourceNotFoundException;
 
     List<T> findAll(@Nullable Map<String, String> sortingParameters) throws ServiceException;
 
     boolean deleteById(long id) throws ServiceException, ResourceNotFoundException;
 
-    Optional<T> findByName(String name) throws ServiceException, ResourceNotFoundException;
+    T findByName(String name) throws ServiceException, ResourceNotFoundException;
 
 }
