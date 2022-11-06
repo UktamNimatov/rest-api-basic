@@ -117,10 +117,10 @@ public class GiftCertificateServiceImpl extends AbstractEntityService<GiftCertif
         }
     }
 
-    @Override
-    public List<GiftCertificate> sortByRequirements(List<GiftCertificate> giftCertificatesList, Map<String, String> requirements) {
-        return giftCertificateDao.sortByRequirements(giftCertificatesList, requirements);
-    }
+//    @Override
+//    public List<GiftCertificate> sortByRequirements(List<GiftCertificate> giftCertificatesList, Map<String, String> requirements) {
+//        return giftCertificateDao.sortByRequirements(giftCertificatesList, requirements);
+//    }
 
     private boolean doesAlreadyExist(String giftCertificateName) {
         try {

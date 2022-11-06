@@ -23,5 +23,5 @@ public interface GiftCertificateService<T> extends EntityService<GiftCertificate
 
     List<T> searchByNameOrDescription(String searchKey, @Nullable Map<String, String> sortingParameters) throws ServiceException, ResourceNotFoundException;
 
-    List<T> sortByRequirements(List<T> giftCertificatesList, Map<String, String> requirements);
+//    List<T> sortByRequirements(List<T> giftCertificatesList, Map<String, String> requirements);
 }
