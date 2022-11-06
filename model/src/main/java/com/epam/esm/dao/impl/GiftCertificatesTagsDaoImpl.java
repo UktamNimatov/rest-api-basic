@@ -4,6 +4,7 @@ import com.epam.esm.dao.AbstractEntityDao;
 import com.epam.esm.dao.GiftCertificatesTagsDao;
 import com.epam.esm.dao.mapper.EntityMapper;
 import com.epam.esm.dao.mapper.GiftCertificatesTagsMapper;
+import com.epam.esm.dao.query_creator.QueryCreator;
 import com.epam.esm.entity.GiftCertificatesTags;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -13,8 +14,9 @@ public class GiftCertificatesTagsDaoImpl extends AbstractEntityDao<GiftCertifica
     private final JdbcTemplate jdbcTemplate;
     private final GiftCertificatesTagsMapper giftCertificatesTagsMapper;
 
-    public GiftCertificatesTagsDaoImpl(JdbcTemplate jdbcTemplate, EntityMapper<GiftCertificatesTags> entityMapper, JdbcTemplate jdbcTemplate1, GiftCertificatesTagsMapper giftCertificatesTagsMapper) {
-        super(jdbcTemplate, entityMapper);
+    public GiftCertificatesTagsDaoImpl(JdbcTemplate jdbcTemplate, EntityMapper<GiftCertificatesTags> entityMapper, QueryCreator queryCreator,
+                                       JdbcTemplate jdbcTemplate1, GiftCertificatesTagsMapper giftCertificatesTagsMapper) {
+        super(jdbcTemplate, entityMapper, queryCreator);
         this.jdbcTemplate = jdbcTemplate1;
         this.giftCertificatesTagsMapper = giftCertificatesTagsMapper;
     }

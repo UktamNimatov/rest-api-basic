@@ -1,5 +1,6 @@
 package com.epam.esm.validator.impl;
 
+import com.epam.esm.dao.mapper.ColumnName;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.validator.GiftCertificateValidator;
 import org.apache.logging.log4j.LogManager;
@@ -29,6 +30,8 @@ public class GiftCertificateValidatorImpl implements GiftCertificateValidator {
     private static final String NAME_REGEX = "[\\p{Alpha}\\s*+\\p{Digit}]{3,50}";
     private static final String PRICE_REGEX = "^\\d{0,8}(\\.\\d{1,4})?$";
     private static final String DESCRIPTION_REGEX = "^.{3,}$";
+    private static final String SCRIPT = "<script>";
+    private static final String RIGHT_SCRIPT = "</script>";
 
     private static final String INCORRECT_VALUE_PARAMETER = " - incorrect value";
 
@@ -41,10 +44,10 @@ public class GiftCertificateValidatorImpl implements GiftCertificateValidator {
     @Override
     public boolean checkDescription(String description) {
         boolean min = (description != null) && Pattern.matches(DESCRIPTION_REGEX, description);
-        if (description.contains("<script>") || description.contains("</script>")) {
+        if (description.contains(SCRIPT) || description.contains(RIGHT_SCRIPT)) {
             String newDescription;
-            newDescription = description.replaceAll("<script>", "");
-            newDescription = newDescription.replaceAll("</script>", "");
+            newDescription = description.replaceAll(SCRIPT, "");
+            newDescription = newDescription.replaceAll(RIGHT_SCRIPT, "");
             return Pattern.matches(DESCRIPTION_REGEX, newDescription);
         }
         return min;
@@ -85,27 +88,27 @@ public class GiftCertificateValidatorImpl implements GiftCertificateValidator {
         boolean isValid = true;
         ERROR_LIST = new ArrayList<>();
         if (!checkName(giftCertificate.getName())) {
-            ERROR_LIST.add("name " + INCORRECT_VALUE_PARAMETER);
+            ERROR_LIST.add(ColumnName.NAME + INCORRECT_VALUE_PARAMETER);
             isValid = false;
         }
         if (!checkDescription(giftCertificate.getDescription())) {
-            ERROR_LIST.add("description " + INCORRECT_VALUE_PARAMETER);
+            ERROR_LIST.add(ColumnName.DESCRIPTION + INCORRECT_VALUE_PARAMETER);
             isValid = false;
         }
         if (!checkPrice(giftCertificate.getPrice())) {
-            ERROR_LIST.add("price " + INCORRECT_VALUE_PARAMETER);
+            ERROR_LIST.add(ColumnName.PRICE + INCORRECT_VALUE_PARAMETER);
             isValid = false;
         }
         if (!checkDuration(giftCertificate.getDuration())) {
-            ERROR_LIST.add("duration " + INCORRECT_VALUE_PARAMETER);
+            ERROR_LIST.add(ColumnName.DURATION + INCORRECT_VALUE_PARAMETER);
             isValid = false;
         }
         if (!checkCreateDate(giftCertificate.getCreateDate())) {
-            ERROR_LIST.add("createDate " + INCORRECT_VALUE_PARAMETER);
+            ERROR_LIST.add(ColumnName.CREATE_DATE + INCORRECT_VALUE_PARAMETER);
             isValid = false;
         }
         if (!checkLastUpdateDate(giftCertificate.getLastUpdateDate())) {
-            ERROR_LIST.add("lastUpdateDate " + INCORRECT_VALUE_PARAMETER);
+            ERROR_LIST.add(ColumnName.LAST_UPDATE_DATE + INCORRECT_VALUE_PARAMETER);
             isValid = false;
         }
         return isValid;

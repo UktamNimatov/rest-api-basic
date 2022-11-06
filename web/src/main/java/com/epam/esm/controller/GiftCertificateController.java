@@ -2,7 +2,6 @@ package com.epam.esm.controller;
 
 import com.epam.esm.constant.ConstantMessages;
 import com.epam.esm.entity.GiftCertificate;
-import com.epam.esm.entity.Tag;
 import com.epam.esm.exception.DuplicateResourceException;
 import com.epam.esm.exception.InvalidFieldException;
 import com.epam.esm.exception.ResourceNotFoundException;
@@ -10,12 +9,10 @@ import com.epam.esm.exception.ServiceException;
 import com.epam.esm.service.GiftCertificateService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.core.config.plugins.validation.constraints.NotBlank;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.*;
 
@@ -40,21 +37,22 @@ public class GiftCertificateController {
                                         @RequestParam(required = false) String sortByName,
                                         @RequestParam(required = false) String sortByCreateDate,
                                         @RequestParam(required = false) String sortByLastUpdateDate) throws ServiceException, ResourceNotFoundException {
-        Map<String, String> requirements =
+        Map<String, String> sortRequirements =
                 setSortRequirements(sortByName, sortByCreateDate, sortByLastUpdateDate);
 
         if (name != null) {
+            logger.info("controller: name param is not null: " + name);
             return Collections.singletonList(giftCertificateService.findByName(name).get());
         }
         if (searchKey != null) {
-            return giftCertificateService
-                    .sortByRequirements(giftCertificateService.searchByNameOrDescription(searchKey), requirements);
+            logger.info("controller: searchKey param is not null: " + searchKey);
+            return giftCertificateService.searchByNameOrDescription(searchKey, sortRequirements);
         }
         if (tagName != null) {
-            return giftCertificateService
-                    .sortByRequirements(giftCertificateService.findGiftCertificatesOfTag(tagName), requirements);
+            logger.info("controller: tagName param is not null: " + tagName);
+            return giftCertificateService.findGiftCertificatesOfTag(tagName, sortRequirements);
         }
-        return giftCertificateService.sortByRequirements(giftCertificateService.findAll(), requirements);
+        return giftCertificateService.findAll(sortRequirements);
     }
 
     @GetMapping("/{id}")
@@ -62,32 +60,8 @@ public class GiftCertificateController {
         return giftCertificateService.findById(id).get();
     }
 
-    @GetMapping("/name/{name}")
-    public GiftCertificate findByName(@PathVariable("name") String name) throws ResourceNotFoundException, ServiceException {
-        return giftCertificateService.findByName(name).get();
-    }
-
-    @GetMapping("/search/{searchKey}")
-    public List<GiftCertificate> findBySearch(@PathVariable("searchKey") String searchKey,
-                                              @RequestParam(required = false) String sortByName,
-                                              @RequestParam(required = false) String sortByCreateDate,
-                                              @RequestParam(required = false) String sortByLastUpdateDate) throws ServiceException, ResourceNotFoundException {
-        Map<String, String> requirements = setSortRequirements(sortByName, sortByCreateDate, sortByLastUpdateDate);
-        return giftCertificateService.sortByRequirements(giftCertificateService.searchByNameOrDescription(searchKey), requirements);
-    }
-
-    @GetMapping("/tagName/{tagName}")
-    public List<GiftCertificate> findByTagName(@PathVariable("tagName") String tagName,
-                                               @RequestParam(required = false) String sortByName,
-                                               @RequestParam(required = false) String sortByCreateDate,
-                                               @RequestParam(required = false) String sortByLastUpdateDate) throws ServiceException, ResourceNotFoundException {
-        Map<String, String> requirements = setSortRequirements(sortByName, sortByCreateDate, sortByLastUpdateDate);
-        logger.info(tagName + " is the tagName");
-        return giftCertificateService.sortByRequirements(giftCertificateService.findGiftCertificatesOfTag(tagName), requirements);
-    }
-
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<GiftCertificate> insertTag(@RequestBody GiftCertificate giftCertificate) throws ServiceException, InvalidFieldException, DuplicateResourceException {
+    public ResponseEntity<GiftCertificate> insertGiftCertificate(@RequestBody GiftCertificate giftCertificate) throws ServiceException, InvalidFieldException, DuplicateResourceException {
         giftCertificateService.insert(giftCertificate);
         return new ResponseEntity<>(giftCertificate, HttpStatus.CREATED);
     }

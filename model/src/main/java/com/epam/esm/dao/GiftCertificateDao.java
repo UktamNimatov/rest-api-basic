@@ -13,7 +13,7 @@ public interface GiftCertificateDao<T> extends EntityDao<GiftCertificate> {
 
     boolean insert(GiftCertificate giftCertificate) throws DaoException;
 
-    List<T> findGiftCertificatesOfTag(String tagName) throws DaoException;
+    List<T> findGiftCertificatesOfTag(String tagName, @Nullable Map<String, String> sortingParameters) throws DaoException;
 
     boolean update(T giftCertificate) throws DaoException;
 
@@ -21,7 +21,6 @@ public interface GiftCertificateDao<T> extends EntityDao<GiftCertificate> {
 
     boolean disconnectTags(long giftCertificateId) throws DaoException;
 
-    List<T> searchByNameOrDescription(String searchKey) throws DaoException;
+    List<T> searchByNameOrDescription(String searchKey, @Nullable Map<String, String> sortingParameters) throws DaoException;
 
-    List<T> sortByRequirements(List<T> giftCertificatesList, Map<String, String> requirements);
 }

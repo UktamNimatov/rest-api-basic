@@ -16,10 +16,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.awt.*;
-import java.util.Arrays;
-import java.util.Collections;
+import java.util.*;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/tags")
@@ -46,7 +44,7 @@ public class TagController {
         if (giftCertificateId != null) {
             return tagService.findTagsOfCertificate(giftCertificateId);
         }
-        else return tagService.findAll();
+        else return tagService.findAll(null);
     }
 
     @GetMapping("/{id}")

@@ -27,6 +27,30 @@ public class InvalidFieldExceptionHandler {
             errorMessage = errorMessage.replace(ConstantMessages.INVALID_TAG,
                     Translator.toLocale(ConstantMessages.INVALID_TAG));
         }
+        if (errorMessage.contains(ConstantMessages.INVALID_GIFT_CERTIFICATE_NAME)) {
+            errorMessage = errorMessage.replace(ConstantMessages.INVALID_GIFT_CERTIFICATE_NAME,
+                    Translator.toLocale(ConstantMessages.INVALID_GIFT_CERTIFICATE_NAME));
+        }
+        if (errorMessage.contains(ConstantMessages.INVALID_GIFT_CERTIFICATE_DESCRIPTION)) {
+            errorMessage = errorMessage.replace(ConstantMessages.INVALID_GIFT_CERTIFICATE_DESCRIPTION,
+                    Translator.toLocale(ConstantMessages.INVALID_GIFT_CERTIFICATE_DESCRIPTION));
+        }
+        if (errorMessage.contains(ConstantMessages.INVALID_GIFT_CERTIFICATE_DURATION)) {
+            errorMessage = errorMessage.replace(ConstantMessages.INVALID_GIFT_CERTIFICATE_DURATION,
+                    Translator.toLocale(ConstantMessages.INVALID_GIFT_CERTIFICATE_DURATION));
+        }
+        if (errorMessage.contains(ConstantMessages.INVALID_GIFT_CERTIFICATE_PRICE)) {
+            errorMessage = errorMessage.replace(ConstantMessages.INVALID_GIFT_CERTIFICATE_PRICE,
+                    Translator.toLocale(ConstantMessages.INVALID_GIFT_CERTIFICATE_PRICE));
+        }
+        if (errorMessage.contains(ConstantMessages.INVALID_GIFT_CERTIFICATE_CREATE_DATE)) {
+            errorMessage = errorMessage.replace(ConstantMessages.INVALID_GIFT_CERTIFICATE_CREATE_DATE,
+                    Translator.toLocale(ConstantMessages.INVALID_GIFT_CERTIFICATE_CREATE_DATE));
+        }
+        if (errorMessage.contains(ConstantMessages.INVALID_GIFT_CERTIFICATE_UPDATE_DATE)) {
+            errorMessage = errorMessage.replace(ConstantMessages.INVALID_GIFT_CERTIFICATE_UPDATE_DATE,
+                    Translator.toLocale(ConstantMessages.INVALID_GIFT_CERTIFICATE_UPDATE_DATE));
+        }
         ExceptionResponse exceptionResponse =
                 new ExceptionResponse(errorMessage, invalidFieldException.getErrorCode());
         return new ResponseEntity<>(exceptionResponse, httpStatus);

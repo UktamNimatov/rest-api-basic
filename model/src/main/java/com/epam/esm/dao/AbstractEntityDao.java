@@ -2,6 +2,7 @@ package com.epam.esm.dao;
 
 import com.epam.esm.dao.mapper.ColumnName;
 import com.epam.esm.dao.mapper.EntityMapper;
+import com.epam.esm.dao.query_creator.QueryCreator;
 import com.epam.esm.entity.Entity;
 import com.epam.esm.exception.DaoException;
 import org.apache.logging.log4j.LogManager;
@@ -10,9 +11,11 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.lang.Nullable;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -22,10 +25,12 @@ public abstract class AbstractEntityDao<T extends Entity> implements EntityDao<T
 
     protected final JdbcTemplate jdbcTemplate;
     protected final EntityMapper<T> entityMapper;
+    protected final QueryCreator queryCreator;
 
-    public AbstractEntityDao(JdbcTemplate jdbcTemplate, EntityMapper<T> entityMapper) {
+    public AbstractEntityDao(JdbcTemplate jdbcTemplate, EntityMapper<T> entityMapper, QueryCreator queryCreator) {
         this.jdbcTemplate = jdbcTemplate;
         this.entityMapper = entityMapper;
+        this.queryCreator = queryCreator;
     }
 
 
@@ -38,15 +43,6 @@ public abstract class AbstractEntityDao<T extends Entity> implements EntityDao<T
     private static final String DELETE_FROM = " DELETE FROM ";
 
 
-//    @Override
-//    public boolean insert(T entity) throws DaoException {
-//        try {
-//            return jdbcTemplate.update(INSERT_INTO + getTableName()) == 1;
-//        } catch (DataAccessException e) {
-//            throw new DaoException(e);
-//        }
-//    }
-
     @Override
     public Optional<T> findById(long id) {
         try {
@@ -58,9 +54,14 @@ public abstract class AbstractEntityDao<T extends Entity> implements EntityDao<T
     }
 
     @Override
-    public List<T> findAll() throws DaoException {
+    public List<T> findAll(@Nullable Map<String, String> sortingParameters) throws DaoException {
         try {
-            return jdbcTemplate.query(SELECT_FROM + getTableName(), entityMapper)
+            String currentQuery = SELECT_FROM + getTableName();
+            if ((sortingParameters != null) && !sortingParameters.isEmpty()) {
+                currentQuery = queryCreator.createSortQuery(sortingParameters, currentQuery);
+            }
+            logger.info("query is " + currentQuery);
+            return jdbcTemplate.query(currentQuery, entityMapper)
                     .stream()
                     .filter(Optional::isPresent)
                     .map(Optional::get)

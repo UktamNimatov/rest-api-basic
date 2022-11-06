@@ -4,6 +4,7 @@ import com.epam.esm.dao.AbstractEntityDao;
 import com.epam.esm.dao.TagDao;
 import com.epam.esm.dao.mapper.GiftCertificatesTagsMapper;
 import com.epam.esm.dao.mapper.TagMapper;
+import com.epam.esm.dao.query_creator.QueryCreator;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.GiftCertificatesTags;
 import com.epam.esm.entity.Tag;
@@ -29,8 +30,9 @@ public class TagDaoImpl extends AbstractEntityDao<Tag> implements TagDao<Tag>{
     private static final String INSERT = "INSERT INTO tags (name) values(?)";
 
     @Autowired
-    public TagDaoImpl(JdbcTemplate jdbcTemplate, TagMapper tagMapper, GiftCertificatesTagsMapper giftCertificatesTagsMapper) {
-        super(jdbcTemplate, tagMapper);
+    public TagDaoImpl(JdbcTemplate jdbcTemplate, TagMapper tagMapper, QueryCreator queryCreator,
+                      GiftCertificatesTagsMapper giftCertificatesTagsMapper) {
+        super(jdbcTemplate, tagMapper, queryCreator);
         this.jdbcTemplate = jdbcTemplate;
         this.tagMapper = tagMapper;
         this.giftCertificatesTagsMapper = giftCertificatesTagsMapper;
