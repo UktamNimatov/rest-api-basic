@@ -17,4 +17,6 @@ public interface TagService<T> extends EntityService<Tag> {
     List<T> findTagsOfCertificate(long certificateId) throws ServiceException;
 
     boolean connectGiftCertificates(List<GiftCertificate> giftCertificates, long tagId) throws ServiceException;
+
+    void checkTagsWithValidator(List<Tag> tagList) throws InvalidFieldException;
 }

@@ -2,6 +2,8 @@ package com.epam.esm.validator;
 
 import com.epam.esm.entity.GiftCertificate;
 
+import java.util.List;
+
 public interface GiftCertificateValidator {
 
     boolean checkName(String name);
@@ -10,5 +12,5 @@ public interface GiftCertificateValidator {
     boolean checkDuration(int duration);
     boolean checkCreateDate(String createDate);
     boolean checkLastUpdateDate(String lastUpdateDate);
-    boolean checkGiftCertificate(GiftCertificate giftCertificate);
+    List<String> checkGiftCertificate(GiftCertificate giftCertificate);
 }

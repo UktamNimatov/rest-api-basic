@@ -16,4 +16,6 @@ public interface TagDao<T> extends EntityDao<Tag> {
 
     boolean connectGiftCertificates(List<GiftCertificate> giftCertificates, long tagId) throws DaoException;
 
+    List<T> insertNewTags(List<Tag> tagList) throws DaoException;
+
 }

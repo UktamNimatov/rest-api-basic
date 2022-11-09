@@ -68,7 +68,7 @@ public class GiftCertificateDaoImpl extends AbstractEntityDao<GiftCertificate> i
                     giftCertificate.getCreateDate(),
                     giftCertificate.getLastUpdateDate()) == 1;
             if (insertResult && giftCertificate.getTagList() != null) {
-                List<Tag> tags = insertNewTags(giftCertificate.getTagList());
+                List<Tag> tags = tagDao.insertNewTags(giftCertificate.getTagList());
                 return connectTags(tags, findByName(giftCertificate.getName()).get().getId());
             }
             return false;
@@ -105,7 +105,8 @@ public class GiftCertificateDaoImpl extends AbstractEntityDao<GiftCertificate> i
                     jdbcTemplate.update(updateQuery) == 1;
             logger.info("update query result is " + updateResult);
             if (giftCertificate.getTagList() != null && updateResult && disconnectTags(giftCertificate.getId())) {
-                return connectTags(giftCertificate.getTagList(), giftCertificate.getId());
+                List<Tag> tags = tagDao.insertNewTags(giftCertificate.getTagList());
+                return connectTags(tags, giftCertificate.getId());
             }
             return updateResult;
         } catch (DataAccessException e) {
@@ -116,7 +117,6 @@ public class GiftCertificateDaoImpl extends AbstractEntityDao<GiftCertificate> i
     @Override
     public boolean connectTags(List<Tag> tags, long giftCertificateId) throws DaoException {
         try {
-            tags = getTagsByName(tags);
             return tags.stream().allMatch(tag ->
                     jdbcTemplate.update(INSERT_INTO_GIFT_CERTIFICATES_TAGS, giftCertificateId, tag.getId()) == 1);
         } catch (DataAccessException exception) {
@@ -149,29 +149,6 @@ public class GiftCertificateDaoImpl extends AbstractEntityDao<GiftCertificate> i
         } catch (DataAccessException exception) {
             throw new DaoException(exception);
         }
-    }
-    private List<Tag> getTagsByName(List<Tag> tagList) throws DaoException {
-        List<Tag> toReturn = new ArrayList<>();
-        List<String> tagNames = new ArrayList<>();
-        tagList.forEach(tag -> tagNames.add(tag.getName()));
-
-        for (String tagName : tagNames) {
-                toReturn.add(tagDao.findByName(tagName).get());
-        }
-        return toReturn;
-    }
-
-    private List<Tag> insertNewTags(List<Tag> tags) throws DaoException {
-        List<String> tagNames = new ArrayList<>();
-        tags.forEach(tag -> tagNames.add(tag.getName()));
-        List<Tag> tagList = new ArrayList<>();
-        for (String tagName : tagNames) {
-            if (!tagDao.findByName(tagName).isPresent()) {
-                tagDao.insert(new Tag(tagName));
-            }
-            tagList.add(tagDao.findByName(tagName).get());
-        }
-        return tagList;
     }
 
     private Map<String, String> putFieldToMap(GiftCertificate giftCertificate) {

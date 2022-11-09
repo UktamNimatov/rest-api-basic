@@ -8,15 +8,12 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
-import java.time.chrono.ChronoZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Pattern;
 
 import static java.time.ZonedDateTime.now;
@@ -24,8 +21,6 @@ import static java.time.ZonedDateTime.now;
 @Component
 public class GiftCertificateValidatorImpl implements GiftCertificateValidator {
     private static final Logger logger = LogManager.getLogger();
-
-    public static List<String> ERROR_LIST;
 
     private static final String NAME_REGEX = "[\\p{Alpha}\\s*+\\p{Digit}]{3,50}";
     private static final String PRICE_REGEX = "^\\d{0,8}(\\.\\d{1,4})?$";
@@ -84,33 +79,33 @@ public class GiftCertificateValidatorImpl implements GiftCertificateValidator {
     }
 
     @Override
-    public boolean checkGiftCertificate(GiftCertificate giftCertificate) {
+    public List<String> checkGiftCertificate(GiftCertificate giftCertificate) {
         boolean isValid = true;
-        ERROR_LIST = new ArrayList<>();
+        List<String> errorList = new ArrayList<>();
         if (!checkName(giftCertificate.getName())) {
-            ERROR_LIST.add(ColumnName.NAME + INCORRECT_VALUE_PARAMETER);
+            errorList.add(ColumnName.NAME + INCORRECT_VALUE_PARAMETER);
             isValid = false;
         }
         if (!checkDescription(giftCertificate.getDescription())) {
-            ERROR_LIST.add(ColumnName.DESCRIPTION + INCORRECT_VALUE_PARAMETER);
+            errorList.add(ColumnName.DESCRIPTION + INCORRECT_VALUE_PARAMETER);
             isValid = false;
         }
         if (!checkPrice(giftCertificate.getPrice())) {
-            ERROR_LIST.add(ColumnName.PRICE + INCORRECT_VALUE_PARAMETER);
+            errorList.add(ColumnName.PRICE + INCORRECT_VALUE_PARAMETER);
             isValid = false;
         }
         if (!checkDuration(giftCertificate.getDuration())) {
-            ERROR_LIST.add(ColumnName.DURATION + INCORRECT_VALUE_PARAMETER);
+            errorList.add(ColumnName.DURATION + INCORRECT_VALUE_PARAMETER);
             isValid = false;
         }
         if (!checkCreateDate(giftCertificate.getCreateDate())) {
-            ERROR_LIST.add(ColumnName.CREATE_DATE + INCORRECT_VALUE_PARAMETER);
+            errorList.add(ColumnName.CREATE_DATE + INCORRECT_VALUE_PARAMETER);
             isValid = false;
         }
         if (!checkLastUpdateDate(giftCertificate.getLastUpdateDate())) {
-            ERROR_LIST.add(ColumnName.LAST_UPDATE_DATE + INCORRECT_VALUE_PARAMETER);
+            errorList.add(ColumnName.LAST_UPDATE_DATE + INCORRECT_VALUE_PARAMETER);
             isValid = false;
         }
-        return isValid;
+        return errorList;
     }
 }

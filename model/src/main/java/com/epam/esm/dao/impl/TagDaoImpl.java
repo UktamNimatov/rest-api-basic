@@ -78,6 +78,20 @@ public class TagDaoImpl extends AbstractEntityDao<Tag> implements TagDao<Tag>{
         }
     }
 
+    @Override
+    public List<Tag> insertNewTags(List<Tag> tagsToInsert) throws DaoException {
+        List<String> tagNames = new ArrayList<>();
+        tagsToInsert.forEach(tag -> tagNames.add(tag.getName()));
+        List<Tag> tagList = new ArrayList<>();
+        for (String tagName : tagNames) {
+            if (!findByName(tagName).isPresent()) {
+                insert(new Tag(tagName));
+            }
+            tagList.add(findByName(tagName).get());
+        }
+        return tagList;
+    }
+
     private List<GiftCertificatesTags> findGiftCertificatesTagsListFromQuery(long certificateId) throws DaoException {
         try {
             return jdbcTemplate.query(SELECT_TAGS_OF_GIFT_CERTIFICATE, giftCertificatesTagsMapper, certificateId)

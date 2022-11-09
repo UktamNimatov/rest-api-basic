@@ -2,6 +2,7 @@ package com.epam.esm.service.impl;
 
 import com.epam.esm.constant.ConstantMessages;
 import com.epam.esm.dao.AbstractEntityDao;
+import com.epam.esm.dao.GiftCertificateDao;
 import com.epam.esm.dao.TagDao;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
@@ -25,14 +26,14 @@ public class TagServiceImpl extends AbstractEntityService<Tag> implements TagSer
 
     private final TagDao<Tag> tagDao;
     private final TagValidator tagValidator = new TagValidatorImpl();
-    private final GiftCertificateService<GiftCertificate> giftCertificateService;
+    private final GiftCertificateDao<GiftCertificate> giftCertificateDao;
 
     @Autowired
     public TagServiceImpl(AbstractEntityDao<Tag> abstractEntityDao, TagDao<Tag> tagDao,
-                          GiftCertificateService<GiftCertificate> giftCertificateService) {
+                          GiftCertificateDao<GiftCertificate> giftCertificateDao) {
         super(abstractEntityDao);
         this.tagDao = tagDao;
-        this.giftCertificateService = giftCertificateService;
+        this.giftCertificateDao = giftCertificateDao;
     }
 
     @Override
@@ -55,7 +56,7 @@ public class TagServiceImpl extends AbstractEntityService<Tag> implements TagSer
     @Override
     public List<Tag> findTagsOfCertificate(long certificateId) throws ServiceException{
         try {
-            if (giftCertificateService.findById(certificateId) == null) {
+            if (!giftCertificateDao.findById(certificateId).isPresent()) {
                 throw new ResourceNotFoundException(String.valueOf(ConstantMessages.ERROR_CODE_404),
                         ConstantMessages.RESOURCE_NOT_FOUND);
             }
@@ -72,6 +73,17 @@ public class TagServiceImpl extends AbstractEntityService<Tag> implements TagSer
             return tagDao.connectGiftCertificates(giftCertificates, tagId);
         } catch (DaoException daoException) {
             throw new ServiceException(daoException);
+        }
+    }
+
+    @Override
+    public void checkTagsWithValidator(List<Tag> tagList) throws InvalidFieldException {
+        if (tagList != null) {
+            boolean checkResult = tagList
+                    .stream()
+                    .allMatch(tag -> tagValidator.checkName(tag.getName()));
+            if (!checkResult) throw new InvalidFieldException(String.valueOf(ConstantMessages.ERROR_CODE_400),
+                    ConstantMessages.INVALID_TAG_NAME);
         }
     }
 
