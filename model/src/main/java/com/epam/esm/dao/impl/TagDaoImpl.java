@@ -28,6 +28,8 @@ public class TagDaoImpl extends AbstractEntityDao<Tag> implements TagDao<Tag>{
     private static final String SELECT_TAGS_OF_GIFT_CERTIFICATE = "SELECT * FROM gift_certificates_tags WHERE gift_certificate_id=?";
     private static final String INSERT_INTO_GIFT_CERTIFICATES_TAGS = "INSERT INTO gift_certificates_tags (gift_certificate_id, tag_id) VALUES(?, ?)";
     private static final String INSERT = "INSERT INTO tags (name) values(?)";
+    private static final String FIND_TAGS_OF_GIFT_CERTIFICATE = "SELECT t.id, t.name FROM tags as t JOIN gift_certificates_tags as gct " +
+            "ON t.id = gct.tag_id JOIN gift_certificates as gc ON gc.id = gct.gift_certificate_id WHERE gc.id=?";
 
     @Autowired
     public TagDaoImpl(JdbcTemplate jdbcTemplate, TagMapper tagMapper, QueryCreator queryCreator,
@@ -55,14 +57,11 @@ public class TagDaoImpl extends AbstractEntityDao<Tag> implements TagDao<Tag>{
     @Override
     public List<Tag> findTagsOfCertificate(long certificateId) throws DaoException{
         try {
-            List<Tag> tagList = new ArrayList<>();
-            List<GiftCertificatesTags> giftCertificatesTagsList = findGiftCertificatesTagsListFromQuery(certificateId);
-
-            for (GiftCertificatesTags giftCertificatesTags : giftCertificatesTagsList) {
-                Optional<Tag> optionalGiftCertificate = findById(giftCertificatesTags.getTagId());
-                optionalGiftCertificate.ifPresent(tagList::add);
-            }
-            return tagList;
+            return jdbcTemplate.query(FIND_TAGS_OF_GIFT_CERTIFICATE, tagMapper, certificateId)
+                    .stream()
+                    .filter(Optional::isPresent)
+                    .map(Optional::get)
+                    .collect(Collectors.toList());
         } catch (DataAccessException exception) {
             throw new DaoException(exception);
         }
@@ -90,18 +89,6 @@ public class TagDaoImpl extends AbstractEntityDao<Tag> implements TagDao<Tag>{
             tagList.add(findByName(tagName).get());
         }
         return tagList;
-    }
-
-    private List<GiftCertificatesTags> findGiftCertificatesTagsListFromQuery(long certificateId) throws DaoException {
-        try {
-            return jdbcTemplate.query(SELECT_TAGS_OF_GIFT_CERTIFICATE, giftCertificatesTagsMapper, certificateId)
-                    .stream()
-                    .filter(Optional::isPresent)
-                    .map(Optional::get)
-                    .collect(Collectors.toList());
-        } catch (DataAccessException e) {
-            throw new DaoException(e);
-        }
     }
 
 }

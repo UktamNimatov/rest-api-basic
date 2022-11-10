@@ -23,6 +23,6 @@ public interface GiftCertificateService<T> extends EntityService<GiftCertificate
 
     List<T> searchByNameOrDescription(String searchKey, @Nullable Map<String, String> sortingParameters) throws ServiceException, ResourceNotFoundException;
 
-    List<T> searchByGivenParams(String searchKey, String searchValue, @Nullable Map<String, String> sortingParameters) throws ServiceException, ResourceNotFoundException;
+    List<T> searchByGivenParams(String searchKey, String searchValue, @Nullable Map<String, String> sortingParameters) throws ServiceException, ResourceNotFoundException, DaoException;
 
 }

@@ -3,10 +3,7 @@ package com.epam.esm.controller;
 import com.epam.esm.constant.ConstantMessages;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
-import com.epam.esm.exception.DuplicateResourceException;
-import com.epam.esm.exception.InvalidFieldException;
-import com.epam.esm.exception.ResourceNotFoundException;
-import com.epam.esm.exception.ServiceException;
+import com.epam.esm.exception.*;
 import com.epam.esm.service.GiftCertificateService;
 import com.epam.esm.service.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +31,7 @@ public class TagController {
     @GetMapping
     public List<Tag> findAllTags(@RequestParam(required = false) String name,
                                  @RequestParam(required = false) String giftCertificateName,
-                                 @RequestParam(required = false) Long giftCertificateId) throws ServiceException, ResourceNotFoundException {
+                                 @RequestParam(required = false) Long giftCertificateId) throws ServiceException, ResourceNotFoundException, DaoException {
         if (name != null) {
             return Collections.singletonList(tagService.findByName(name));
         }
@@ -44,17 +41,12 @@ public class TagController {
         if (giftCertificateId != null) {
             return tagService.findTagsOfCertificate(giftCertificateId);
         }
-        else return tagService.findAll(null);
+        else return tagService.findAll(new HashMap<>());
     }
 
     @GetMapping("/{id}")
     public Tag getOne(@PathVariable long id) throws ServiceException, ResourceNotFoundException {
         return tagService.findById(id);
-    }
-
-    @GetMapping("/name/{name}")
-    public Tag findByName(@PathVariable String name) throws ServiceException, ResourceNotFoundException {
-        return tagService.findByName(name);
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)

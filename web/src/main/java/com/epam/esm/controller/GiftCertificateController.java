@@ -2,10 +2,7 @@ package com.epam.esm.controller;
 
 import com.epam.esm.constant.ConstantMessages;
 import com.epam.esm.entity.GiftCertificate;
-import com.epam.esm.exception.DuplicateResourceException;
-import com.epam.esm.exception.InvalidFieldException;
-import com.epam.esm.exception.ResourceNotFoundException;
-import com.epam.esm.exception.ServiceException;
+import com.epam.esm.exception.*;
 import com.epam.esm.service.GiftCertificateService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -37,7 +34,7 @@ public class GiftCertificateController {
     public List<GiftCertificate> getAll(@RequestParam(required = false) Map<String, String> searchValueMap,
                                         @RequestParam(required = false) String sortByName,
                                         @RequestParam(required = false) String sortByCreateDate,
-                                        @RequestParam(required = false) String sortByLastUpdateDate) throws ServiceException, ResourceNotFoundException {
+                                        @RequestParam(required = false) String sortByLastUpdateDate) throws ServiceException, ResourceNotFoundException, DaoException {
         Map<String, String> sortRequirements =
                 setSortRequirements(sortByName, sortByCreateDate, sortByLastUpdateDate);
 
@@ -69,9 +66,9 @@ public class GiftCertificateController {
     @PatchMapping("/{id}")
     public ResponseEntity<GiftCertificate> updateGiftCertificate(@RequestBody GiftCertificate giftCertificate) throws ServiceException, InvalidFieldException {
         if (giftCertificateService.update(giftCertificate)) {
-            return new ResponseEntity<>(giftCertificate, HttpStatus.ACCEPTED);
+            return new ResponseEntity<>(HttpStatus.ACCEPTED);
         }else {
-            return new ResponseEntity<>(giftCertificate, HttpStatus.NOT_MODIFIED);
+            return new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
         }
     }
 

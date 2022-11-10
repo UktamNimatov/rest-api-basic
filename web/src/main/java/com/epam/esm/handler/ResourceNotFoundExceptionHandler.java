@@ -48,20 +48,6 @@ public class ResourceNotFoundExceptionHandler extends ResponseEntityExceptionHan
         return new ResponseEntity<>(exceptionResponse, httpStatus);
     }
 
-//    @ExceptionHandler(NoHandlerFoundException.class)
-//    public ResponseEntity<ExceptionResponse> handle404(NoHandlerFoundException exception) {
-//        ExceptionResponse exceptionResponse = new ExceptionResponse(exception.getMessage(),
-//                String.valueOf(ConstantMessages.ERROR_CODE_404));
-//        return new ResponseEntity<>(exceptionResponse, httpStatus);
-//    }
-
-//    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
-//    public ResponseEntity<ExceptionResponse> handle405(NoHandlerFoundException exception) {
-//        ExceptionResponse exceptionResponse = new ExceptionResponse(exception.getMessage(),
-//                String.valueOf(ConstantMessages.ERROR_CODE_405));
-//        return new ResponseEntity<>(exceptionResponse, HttpStatus.METHOD_NOT_ALLOWED);
-
-//    }
 
     @Override
     protected ResponseEntity<Object> handleNoHandlerFoundException(NoHandlerFoundException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {

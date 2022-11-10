@@ -82,12 +82,19 @@ public abstract class AbstractEntityDao<T extends Entity> implements EntityDao<T
     }
 
     @Override
-    public Optional<T> findByName(String name) {
+    public Optional<T> findByName(String name) throws DaoException {
         try {
             logger.info("abstract entity dao: find by name: " + name);
-             return jdbcTemplate.queryForObject(SELECT_FROM + getTableName() + WHERE_NAME, entityMapper, name);
+             /*Optional<T> optional = */
+            return jdbcTemplate.queryForObject(SELECT_FROM + getTableName() + WHERE_NAME, entityMapper, name);
+//             if (optional == null || !optional.isPresent()) {
+//                 logger.info("either optional is null or value is not present");
+//                 return Optional.empty();
+//             }
+//             return optional;
         } catch (DataAccessException e) {
             logger.error("error in getting one object from database");
+//            throw new DaoException(e);
             return Optional.empty();
         }
     }

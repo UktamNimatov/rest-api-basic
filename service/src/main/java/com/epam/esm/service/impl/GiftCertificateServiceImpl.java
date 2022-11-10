@@ -34,7 +34,7 @@ public class GiftCertificateServiceImpl extends AbstractEntityService<GiftCertif
     private static final String KEY_WORD = "keyWord";
 
     private final GiftCertificateDao<GiftCertificate> giftCertificateDao;
-    private final GiftCertificateValidator giftCertificateValidator = new GiftCertificateValidatorImpl();
+    private final GiftCertificateValidator giftCertificateValidator;
     private final TagValidator tagValidator = new TagValidatorImpl();
     private final TagDao<Tag> tagDao;
     private final TagService<Tag> tagService;
@@ -42,11 +42,13 @@ public class GiftCertificateServiceImpl extends AbstractEntityService<GiftCertif
     @Autowired
     public GiftCertificateServiceImpl(AbstractEntityDao<GiftCertificate> abstractEntityDao,
                                       GiftCertificateDao<GiftCertificate> giftCertificateDao,
-                                      TagDao<Tag> tagDao, TagService<Tag> tagService) {
+                                      TagDao<Tag> tagDao, TagService<Tag> tagService,
+                                      GiftCertificateValidator giftCertificateValidator) {
         super(abstractEntityDao);
         this.giftCertificateDao = giftCertificateDao;
         this.tagDao = tagDao;
         this.tagService = tagService;
+        this.giftCertificateValidator = giftCertificateValidator;
     }
 
     @Override
@@ -130,7 +132,7 @@ public class GiftCertificateServiceImpl extends AbstractEntityService<GiftCertif
     }
 
     @Override
-    public List<GiftCertificate> searchByGivenParams(String searchKey, String searchValue, Map<String, String> sortingParameters) throws ServiceException, ResourceNotFoundException {
+    public List<GiftCertificate> searchByGivenParams(String searchKey, String searchValue, Map<String, String> sortingParameters) throws ServiceException, ResourceNotFoundException, DaoException {
         if (searchKey.equals(ColumnName.NAME)) {
             return Collections.singletonList(findByName(searchValue));
         }

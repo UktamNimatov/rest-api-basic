@@ -18,6 +18,6 @@ public interface EntityService<T extends Entity> {
 
     boolean deleteById(long id) throws ServiceException, ResourceNotFoundException;
 
-    T findByName(String name) throws ServiceException, ResourceNotFoundException;
+    T findByName(String name) throws ServiceException, ResourceNotFoundException, DaoException;
 
 }
