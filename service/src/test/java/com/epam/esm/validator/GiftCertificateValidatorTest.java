@@ -47,7 +47,7 @@ public class GiftCertificateValidatorTest {
     public void testDuration() {
         boolean test1 = validator.checkDuration(400);
         Assertions.assertTrue(test1);
-        boolean test2 = validator.checkDuration(0);
+        boolean test2 = validator.checkDuration(-67);
         Assertions.assertFalse(test2);
         boolean test3 = validator.checkDuration(-3);
         Assertions.assertFalse(test3);

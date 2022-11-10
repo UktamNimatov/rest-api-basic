@@ -80,31 +80,24 @@ public class GiftCertificateValidatorImpl implements GiftCertificateValidator {
 
     @Override
     public List<String> checkGiftCertificate(GiftCertificate giftCertificate) {
-        boolean isValid = true;
         List<String> errorList = new ArrayList<>();
         if (!checkName(giftCertificate.getName())) {
             errorList.add(ColumnName.NAME + INCORRECT_VALUE_PARAMETER);
-            isValid = false;
         }
         if (!checkDescription(giftCertificate.getDescription())) {
             errorList.add(ColumnName.DESCRIPTION + INCORRECT_VALUE_PARAMETER);
-            isValid = false;
         }
         if (!checkPrice(giftCertificate.getPrice())) {
             errorList.add(ColumnName.PRICE + INCORRECT_VALUE_PARAMETER);
-            isValid = false;
         }
         if (!checkDuration(giftCertificate.getDuration())) {
             errorList.add(ColumnName.DURATION + INCORRECT_VALUE_PARAMETER);
-            isValid = false;
         }
         if (!checkCreateDate(giftCertificate.getCreateDate())) {
             errorList.add(ColumnName.CREATE_DATE + INCORRECT_VALUE_PARAMETER);
-            isValid = false;
         }
         if (!checkLastUpdateDate(giftCertificate.getLastUpdateDate())) {
             errorList.add(ColumnName.LAST_UPDATE_DATE + INCORRECT_VALUE_PARAMETER);
-            isValid = false;
         }
         return errorList;
     }

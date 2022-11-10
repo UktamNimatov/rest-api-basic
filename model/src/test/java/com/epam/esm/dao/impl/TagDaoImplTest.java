@@ -15,6 +15,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.util.HashMap;
 import java.util.Optional;
 
 @ContextConfiguration(classes = {TestDatabaseConfig.class})
@@ -31,7 +32,7 @@ public class TagDaoImplTest {
 
     @Test
     public void testFindAll() throws DaoException {
-        int size = tagDao.findAll().size();
+        int size = tagDao.findAll(new HashMap<>()).size();
         logger.info("size is : " + size);
         Assertions.assertEquals(5, size);
     }
@@ -44,7 +45,7 @@ public class TagDaoImplTest {
     }
 
     @Test
-    public void testFindByName() {
+    public void testFindByName() throws DaoException {
         Optional<Tag> tagOptional = tagDao.findByName("cool");
         logger.info("Optional tag is : " + tagOptional.get().toString());
         Assertions.assertEquals("cool", tagOptional.get().getName());

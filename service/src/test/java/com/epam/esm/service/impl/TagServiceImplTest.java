@@ -22,6 +22,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,7 +34,7 @@ public class TagServiceImplTest {
     private static final Tag TAG_2 = new Tag(2, "fruit");
     private static final Tag TAG_3 = new Tag(3, "house");
     private static final Tag TAG_4 = new Tag(4, "education");
-    private static final Tag TAG_5 = new Tag(5, "business");
+    private static final Tag TAG_5 = new Tag("business");
 
     @Mock
     private TagDao<Tag> tagDao = Mockito.mock(TagDaoImpl.class);
@@ -50,19 +51,19 @@ public class TagServiceImplTest {
 
     @Test
     @DisplayName(value = "Testing find by name method")
-    public void testFindByName() throws ResourceNotFoundException {
+    public void testFindByName() throws ResourceNotFoundException, DaoException {
         Mockito.when(abstractEntityDao.findByName(TAG_1.getName())).thenReturn(Optional.of(TAG_1));
-        Optional<Tag> actual = tagService.findByName(TAG_1.getName());
-        Optional<Tag> expected = Optional.of(TAG_1);
-        Assertions.assertEquals(expected.get(), actual.get());
+        Tag actual = tagService.findByName(TAG_1.getName());
+        Tag expected = TAG_1;
+        Assertions.assertEquals(expected, actual);
     }
 
     @Test
     @DisplayName(value = "Testing find all method")
     public void testFindAll() throws DaoException, ServiceException {
         List<Tag> tags = Arrays.asList(TAG_1, TAG_2, TAG_3, TAG_4, TAG_5);
-        Mockito.when(abstractEntityDao.findAll()).thenReturn(tags);
-        List<Tag> actual = tagService.findAll();
+        Mockito.when(abstractEntityDao.findAll(new HashMap<>())).thenReturn(tags);
+        List<Tag> actual = tagService.findAll(new HashMap<>());
         List<Tag> expected = tags;
 
         Assertions.assertEquals(expected, actual);
@@ -72,17 +73,17 @@ public class TagServiceImplTest {
     @DisplayName(value = "Testing find by id method")
     public void testFindById() throws ResourceNotFoundException {
         Mockito.when(abstractEntityDao.findById(TAG_4.getId())).thenReturn(Optional.of(TAG_4));
-        Optional<Tag> optionalTag = tagService.findById(TAG_4.getId());
-        Assertions.assertEquals(TAG_4, optionalTag.get());
+        Optional<Tag> optionalTag = Optional.of(tagService.findById(TAG_4.getId()));
+        Assertions.assertEquals(abstractEntityDao.findById(TAG_4.getId()), optionalTag);
     }
 
-    @Test
-    @DisplayName(value = "Testing insert method")
-    public void testInsert() throws ServiceException, InvalidFieldException, DuplicateResourceException, DaoException {
-        Mockito.when(tagDao.insert(TAG_5)).thenReturn(true);
-        boolean actualResult = tagService.insert(TAG_5);
-        Assertions.assertTrue(actualResult);
-    }
+//    @Test
+//    @DisplayName(value = "Testing insert method")
+//    public void testInsert() throws ServiceException, InvalidFieldException, DuplicateResourceException, DaoException {
+//        Mockito.when(tagDao.insert(TAG_5)).thenReturn(true);
+//        boolean actualResult = tagService.insert(TAG_5);
+//        Assertions.assertTrue(actualResult);
+//    }
 
     @Test
     @DisplayName(value = "Testing insert method")

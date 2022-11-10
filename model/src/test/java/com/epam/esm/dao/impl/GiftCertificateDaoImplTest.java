@@ -15,10 +15,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @ContextConfiguration(classes = {TestDatabaseConfig.class})
 @ExtendWith(SpringExtension.class)
@@ -38,7 +35,7 @@ public class GiftCertificateDaoImplTest {
             "2020-08-29T06:12:15.156", Collections.singletonList(new Tag( "tagName3")));
 
     @Test
-    public void testFindByName() {
+    public void testFindByName() throws DaoException {
         Optional<GiftCertificate> optionalGiftCertificate = giftCertificateDao.findByName("Plane");
         optionalGiftCertificate.ifPresent(giftCertificate -> logger.info(" <><><><><> "+giftCertificate.toString()));
         Assertions.assertTrue(optionalGiftCertificate.isPresent());
@@ -53,23 +50,23 @@ public class GiftCertificateDaoImplTest {
 
     @Test
     public void testSearchMethod() throws DaoException {
-        List<GiftCertificate> giftCertificateList = giftCertificateDao.searchByNameOrDescription("plain");
+        List<GiftCertificate> giftCertificateList = giftCertificateDao.searchByNameOrDescription("plain", new HashMap<>());
         Optional<GiftCertificate> optionalGiftCertificate = giftCertificateDao.findById(4);
         Assertions.assertEquals(Collections.singletonList(optionalGiftCertificate.get()), giftCertificateList);
     }
 
     @Test
     public void testFindCertificatesOfTag() throws DaoException {
-        List<GiftCertificate> giftCertificateList = giftCertificateDao.findGiftCertificatesOfTag("cool");
+        List<GiftCertificate> giftCertificateList = giftCertificateDao.findGiftCertificatesOfTag("cool", new HashMap<>());
         Assertions.assertEquals(Collections.singletonList(giftCertificateDao.findByName("Ferry").get()), giftCertificateList);
     }
 
     @Test
     public void testConnectTags() throws DaoException {
-        boolean insertResult = giftCertificateDao.connectTags(tagDao.findAll(), 1);
+        boolean insertResult = giftCertificateDao.connectTags(tagDao.findAll(new HashMap<>()), 1);
         logger.info("connection result: " + insertResult);
         List<Tag> tagList = tagDao.findTagsOfCertificate(1);
-        Assertions.assertEquals(tagList, tagDao.findAll());
+        Assertions.assertEquals(tagList, tagDao.findAll(new HashMap<>()));
     }
 
     @Test
